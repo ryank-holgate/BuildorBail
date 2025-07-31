@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
+
 export default function Home() {
   const [currentResult, setCurrentResult] = useState<ValidationResultWithIdea | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,15 +35,12 @@ export default function Home() {
       description: true, 
       targetMarket: true, 
       budget: true 
-    }).extend({
-      agreeToTerms: insertAppIdeaSchema.shape.agreeToTerms
     })),
     defaultValues: {
       appName: "",
       description: "",
       targetMarket: "",
       budget: "",
-      agreeToTerms: false,
     },
   });
 
@@ -243,6 +241,25 @@ export default function Home() {
                         </FormItem>
                       )}
                     />
+                  </div>
+
+                  <div className="rounded-md border border-gray-600 p-6 bg-gray-900">
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="agreeToTerms"
+                        defaultChecked={true}
+                        className="mt-1 h-5 w-5 rounded border-red-500 bg-gray-800 text-red-600 focus:ring-red-500 focus:ring-2"
+                      />
+                      <div className="space-y-1 leading-none">
+                        <label htmlFor="agreeToTerms" className="text-red-400 font-bold text-lg cursor-pointer">
+                          I want brutally honest feedback
+                        </label>
+                        <p className="text-gray-400 text-sm">
+                          I understand this analysis will be harsh and might crush my dreams. I'm ready for the truth.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="text-center pt-8">

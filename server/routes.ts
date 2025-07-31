@@ -24,7 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create app idea
       const appIdea = await storage.createAppIdea(appIdeaData);
       
-      // Get brutal AI analysis
+      // Get brutal AI analysis (pass full validated data including agreeToTerms)
       const analysis = await brutallyAnalyzeAppIdea(validatedData);
       
       // Store validation result (convert brutal analysis to legacy format)
@@ -80,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create app idea
       const appIdea = await storage.createAppIdea(appIdeaData);
       
-      // Get AI validation
+      // Get AI validation (pass full validated data including agreeToTerms)
       const analysis = await validateAppIdea(validatedData);
       
       // Store validation result
