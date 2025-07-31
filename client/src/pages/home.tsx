@@ -47,7 +47,7 @@ export default function Home() {
   });
 
   const validateMutation = useMutation({
-    mutationFn: async (data: any): Promise<ValidationResultWithIdea> => {
+    mutationFn: async (data: any): Promise<ValidationResultWithIdea & { brutalAnalysis?: any }> => {
       const transformedData = {
         appName: data.appName,
         description: data.description,
@@ -56,13 +56,15 @@ export default function Home() {
         agreeToTerms: true,
       };
       
-      const response = await apiRequest("POST", "/api/validate", transformedData);
+      const response = await apiRequest("POST", "/api/analyze", transformedData);
       return response.json();
     },
     onSuccess: (result) => {
       setCurrentResult(result);
       setIsLoading(false);
-      setTimeSaved(Math.floor(Math.random() * 120) + 40); // Random between 40-160 hours
+      // Use the actual time saved from brutal analysis, or fallback to random
+      const actualTimeSaved = result.brutalAnalysis?.time_saved_hours || Math.floor(Math.random() * 120) + 40;
+      setTimeSaved(actualTimeSaved);
       
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
@@ -304,105 +306,83 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               {/* Market Reality */}
               <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center">
-                  <i className="fas fa-chart-line mr-3"></i>
-                  Market Reality
+                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center justify-between">
+                  <span className="flex items-center">
+                    <i className="fas fa-chart-line mr-3"></i>
+                    Market Reality
+                  </span>
+                  <span className="text-3xl font-black">
+                    {(currentResult as any).brutalAnalysis?.market_reality?.score || Math.floor(currentResult.score)}/10
+                  </span>
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="font-semibold text-green-400 mb-2">What's Working:</h4>
-                    <ul className="space-y-1">
-                      {currentResult.strengths.slice(0, 2).map((strength, index) => (
-                        <li key={index} className="text-gray-300">• {strength}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-red-400 mb-2">Reality Check:</h4>
-                    <ul className="space-y-1">
-                      {currentResult.weaknesses.slice(0, 2).map((weakness, index) => (
-                        <li key={index} className="text-gray-300">• {weakness}</li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="text-gray-300">
+                  <p>{(currentResult as any).brutalAnalysis?.market_reality?.analysis || currentResult.detailedAnalysis.split('\n\n')[0]}</p>
                 </div>
               </div>
 
               {/* Competition Analysis */}
               <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center">
-                  <i className="fas fa-sword mr-3"></i>
-                  Competition Analysis
+                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center justify-between">
+                  <span className="flex items-center">
+                    <i className="fas fa-sword mr-3"></i>
+                    Competition Analysis
+                  </span>
+                  <span className="text-3xl font-black">
+                    {(currentResult as any).brutalAnalysis?.competition_analysis?.score || Math.floor(currentResult.score * 0.8)}/10
+                  </span>
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="font-semibold text-yellow-400 mb-2">Your Edge:</h4>
-                    <ul className="space-y-1">
-                      {currentResult.opportunities.slice(0, 2).map((opportunity, index) => (
-                        <li key={index} className="text-gray-300">• {opportunity}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-red-400 mb-2">Threats:</h4>
-                    <ul className="space-y-1">
-                      {currentResult.weaknesses.slice(2, 4).map((weakness, index) => (
-                        <li key={index} className="text-gray-300">• {weakness}</li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="text-gray-300">
+                  <p>{(currentResult as any).brutalAnalysis?.competition_analysis?.analysis || currentResult.detailedAnalysis.split('\n\n')[1] || "Analysis pending..."}</p>
                 </div>
               </div>
 
               {/* Technical Feasibility */}
               <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center">
-                  <i className="fas fa-cogs mr-3"></i>
-                  Technical Feasibility
+                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center justify-between">
+                  <span className="flex items-center">
+                    <i className="fas fa-cogs mr-3"></i>
+                    Technical Feasibility
+                  </span>
+                  <span className="text-3xl font-black">
+                    {(currentResult as any).brutalAnalysis?.technical_feasibility?.score || Math.floor(currentResult.score * 0.9)}/10
+                  </span>
                 </h3>
                 <div className="text-gray-300">
-                  <p>{currentResult.detailedAnalysis.substring(0, 200)}...</p>
+                  <p>{(currentResult as any).brutalAnalysis?.technical_feasibility?.analysis || currentResult.detailedAnalysis.split('\n\n')[2] || "Technical analysis pending..."}</p>
                 </div>
               </div>
 
               {/* Monetization Reality */}
               <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center">
-                  <i className="fas fa-dollar-sign mr-3"></i>
-                  Monetization Reality
+                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center justify-between">
+                  <span className="flex items-center">
+                    <i className="fas fa-dollar-sign mr-3"></i>
+                    Monetization Reality
+                  </span>
+                  <span className="text-3xl font-black">
+                    {(currentResult as any).brutalAnalysis?.monetization_reality?.score || Math.floor(currentResult.score * 0.7)}/10
+                  </span>
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="font-semibold text-green-400 mb-2">Revenue Potential:</h4>
-                    <ul className="space-y-1">
-                      {currentResult.opportunities.slice(2, 4).map((opportunity, index) => (
-                        <li key={index} className="text-gray-300">• {opportunity}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-red-400 mb-2">Money Problems:</h4>
-                    <ul className="space-y-1">
-                      {currentResult.weaknesses.slice(4, 6).map((weakness, index) => (
-                        <li key={index} className="text-gray-300">• {weakness}</li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="text-gray-300">
+                  <p>{(currentResult as any).brutalAnalysis?.monetization_reality?.analysis || currentResult.detailedAnalysis.split('\n\n')[3] || "Monetization analysis pending..."}</p>
                 </div>
               </div>
             </div>
 
-            {/* Action Items */}
-            {currentResult.actionItems.length > 0 && (
+            {/* Fatal Flaws */}
+            {((currentResult as any).brutalAnalysis?.fatal_flaws?.length > 0 || currentResult.actionItems.length > 0) && (
               <div className="bg-gray-800 border border-red-600 rounded-xl p-8 mb-8">
-                <h3 className="text-2xl font-bold text-red-400 mb-6">What To Do Next</h3>
+                <h3 className="text-2xl font-bold text-red-400 mb-6 flex items-center">
+                  <i className="fas fa-skull mr-3"></i>
+                  Fatal Flaws
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentResult.actionItems.map((action, index) => (
+                  {((currentResult as any).brutalAnalysis?.fatal_flaws || currentResult.weaknesses).map((flaw: string, index: number) => (
                     <div key={index} className="flex items-start space-x-3">
                       <div className="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold flex-shrink-0">
                         {index + 1}
                       </div>
-                      <span className="text-gray-300">{action}</span>
+                      <span className="text-gray-300">{flaw}</span>
                     </div>
                   ))}
                 </div>

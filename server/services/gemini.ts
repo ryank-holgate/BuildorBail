@@ -3,6 +3,29 @@ import type { InsertAppIdea } from "@shared/schema";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
+export interface BrutalAnalysis {
+  verdict: "BUILD" | "BAIL";
+  overall_score: number;
+  market_reality: {
+    score: number;
+    analysis: string;
+  };
+  competition_analysis: {
+    score: number;
+    analysis: string;
+  };
+  technical_feasibility: {
+    score: number;
+    analysis: string;
+  };
+  monetization_reality: {
+    score: number;
+    analysis: string;
+  };
+  fatal_flaws: string[];
+  time_saved_hours: number;
+}
+
 export interface ValidationAnalysis {
   score: number;
   verdict: "BUILD" | "BAIL" | "CAUTION";
@@ -13,65 +36,88 @@ export interface ValidationAnalysis {
   actionItems: string[];
 }
 
-export async function validateAppIdea(appIdea: InsertAppIdea): Promise<ValidationAnalysis> {
-  const systemPrompt = `You are a brutally honest app idea validator. Your job is to provide unfiltered, actionable feedback on app ideas to help entrepreneurs make informed decisions. 
+export async function brutallyAnalyzeAppIdea(appIdea: InsertAppIdea): Promise<BrutalAnalysis> {
+  const prompt = `You are a brutally honest startup advisor and technical expert known for destroying bad ideas with facts. A developer pitched this app idea: ${appIdea.description}
 
-Be BRUTALLY HONEST - no sugar-coating. Point out real market challenges, competition issues, and potential failures. But also highlight genuine opportunities and strengths.
+Target audience: ${appIdea.targetMarket}
+Monetization plan: ${appIdea.budget}
 
-Analyze the app idea across these dimensions:
-- Market size and competition
-- Technical feasibility and complexity  
-- Revenue potential and business model viability
-- User acquisition challenges
-- Differentiation from existing solutions
-- Execution risks
+Your job is to provide a harsh but constructive analysis. Return a JSON response with:
 
-Provide a score from 1-10 (1 = absolute disaster, 10 = unicorn potential) and classify as:
-- BUILD (7-10): Strong potential, recommend proceeding
-- CAUTION (4-6): Proceed carefully with modifications
-- BAIL (1-3): High risk, recommend avoiding
-
-Format your response as JSON with this exact structure:
 {
-  "score": number,
-  "verdict": "BUILD" | "BAIL" | "CAUTION",
-  "strengths": ["strength1", "strength2", ...],
-  "weaknesses": ["weakness1", "weakness2", ...], 
-  "opportunities": ["opportunity1", "opportunity2", ...],
-  "detailedAnalysis": "comprehensive analysis paragraph",
-  "actionItems": ["action1", "action2", ...]
-}`;
+  "verdict": "BUILD" or "BAIL",
+  "overall_score": 1-10,
+  "market_reality": {
+    "score": 1-10,
+    "analysis": "Brutal honest assessment of market demand, size, and competition"
+  },
+  "competition_analysis": {
+    "score": 1-10,
+    "analysis": "Existing competitors and why this idea isn't unique enough"
+  },
+  "technical_feasibility": {
+    "score": 1-10,
+    "analysis": "Technical challenges and required expertise"
+  },
+  "monetization_reality": {
+    "score": 1-10,
+    "analysis": "Why their money-making plan won't work"
+  },
+  "fatal_flaws": ["list of major problems"],
+  "time_saved_hours": estimated_hours_saved_by_not_building
+}
 
-  const userPrompt = `App Name: ${appIdea.appName}
-Description: ${appIdea.description}
-Target Market: ${appIdea.targetMarket}
-Budget: ${appIdea.budget || "Not specified"}
-Key Features: ${appIdea.features || "Not specified"}
-Competition Analysis: ${appIdea.competition || "Not provided"}
-
-Provide brutally honest validation of this app idea.`;
+Be extremely harsh. Only give BUILD verdict if genuinely promising. Use phrases like 'market reality check', 'competition crusher', 'technical difficulty bomb'. Include specific data and examples.`;
 
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-pro",
       config: {
-        systemInstruction: systemPrompt,
         responseMimeType: "application/json",
         responseSchema: {
           type: "object",
           properties: {
-            score: { type: "number" },
-            verdict: { type: "string", enum: ["BUILD", "BAIL", "CAUTION"] },
-            strengths: { type: "array", items: { type: "string" } },
-            weaknesses: { type: "array", items: { type: "string" } },
-            opportunities: { type: "array", items: { type: "string" } },
-            detailedAnalysis: { type: "string" },
-            actionItems: { type: "array", items: { type: "string" } }
+            verdict: { type: "string", enum: ["BUILD", "BAIL"] },
+            overall_score: { type: "number" },
+            market_reality: {
+              type: "object",
+              properties: {
+                score: { type: "number" },
+                analysis: { type: "string" }
+              },
+              required: ["score", "analysis"]
+            },
+            competition_analysis: {
+              type: "object",
+              properties: {
+                score: { type: "number" },
+                analysis: { type: "string" }
+              },
+              required: ["score", "analysis"]
+            },
+            technical_feasibility: {
+              type: "object",
+              properties: {
+                score: { type: "number" },
+                analysis: { type: "string" }
+              },
+              required: ["score", "analysis"]
+            },
+            monetization_reality: {
+              type: "object",
+              properties: {
+                score: { type: "number" },
+                analysis: { type: "string" }
+              },
+              required: ["score", "analysis"]
+            },
+            fatal_flaws: { type: "array", items: { type: "string" } },
+            time_saved_hours: { type: "number" }
           },
-          required: ["score", "verdict", "strengths", "weaknesses", "opportunities", "detailedAnalysis", "actionItems"]
+          required: ["verdict", "overall_score", "market_reality", "competition_analysis", "technical_feasibility", "monetization_reality", "fatal_flaws", "time_saved_hours"]
         }
       },
-      contents: userPrompt,
+      contents: prompt,
     });
 
     const rawJson = response.text;
@@ -79,16 +125,40 @@ Provide brutally honest validation of this app idea.`;
       throw new Error("Empty response from Gemini API");
     }
 
-    const analysis: ValidationAnalysis = JSON.parse(rawJson);
+    const analysis: BrutalAnalysis = JSON.parse(rawJson);
     
     // Validate the response structure
-    if (!analysis.score || !analysis.verdict || !analysis.detailedAnalysis) {
+    if (!analysis.verdict || !analysis.overall_score) {
       throw new Error("Invalid response structure from Gemini API");
     }
 
     return analysis;
   } catch (error) {
     console.error("Gemini API error:", error);
-    throw new Error(`Failed to validate app idea: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to brutally analyze app idea: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+}
+
+export async function validateAppIdea(appIdea: InsertAppIdea): Promise<ValidationAnalysis> {
+  // Get brutal analysis first
+  const brutalAnalysis = await brutallyAnalyzeAppIdea(appIdea);
+  
+  // Transform to legacy format for compatibility
+  const analysis: ValidationAnalysis = {
+    score: brutalAnalysis.overall_score,
+    verdict: brutalAnalysis.verdict === "BUILD" ? "BUILD" : "BAIL",
+    strengths: brutalAnalysis.verdict === "BUILD" ? [
+      brutalAnalysis.market_reality.analysis.split('.')[0],
+      brutalAnalysis.technical_feasibility.analysis.split('.')[0]
+    ] : [],
+    weaknesses: brutalAnalysis.fatal_flaws,
+    opportunities: brutalAnalysis.verdict === "BUILD" ? [
+      brutalAnalysis.monetization_reality.analysis.split('.')[0],
+      brutalAnalysis.competition_analysis.analysis.split('.')[0]
+    ] : [],
+    detailedAnalysis: `Market Reality: ${brutalAnalysis.market_reality.analysis}\n\nCompetition: ${brutalAnalysis.competition_analysis.analysis}\n\nTechnical: ${brutalAnalysis.technical_feasibility.analysis}\n\nMonetization: ${brutalAnalysis.monetization_reality.analysis}`,
+    actionItems: brutalAnalysis.fatal_flaws.map((flaw, index) => `Address fatal flaw ${index + 1}: ${flaw}`)
+  };
+
+  return analysis;
 }

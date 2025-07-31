@@ -106,3 +106,14 @@ Preferred communication style: Simple, everyday language.
 - **Root**: Configuration files and build scripts
 
 The application is designed for deployment on platforms like Replit, with automatic database provisioning and environment variable management. The storage layer uses an abstraction pattern that allows switching between in-memory and PostgreSQL storage based on environment configuration.
+
+## Recent Changes
+
+### January 31, 2025 - Brutal Analysis Integration
+- **Brutal Theme**: Completely redesigned interface with dark theme, red accents, and intimidating language
+- **New API Endpoint**: Added `/api/analyze` endpoint with enhanced Gemini AI integration using exact user-specified prompt template
+- **Enhanced Analysis**: Structured brutal feedback with specific scores for Market Reality, Competition Analysis, Technical Feasibility, and Monetization Reality
+- **Fatal Flaws Detection**: AI now identifies specific fatal flaws and provides accurate time-saved estimates
+- **Loading Messages**: Added rotating brutal messages during analysis ("Crushing your dreams...", "Finding fatal flaws...")
+- **UI Overhaul**: Transformed from polite validation to harsh truth-telling with "DESTROY MY IDEA" button and brutal placeholders
+- **Verdict System**: Simplified to BUILD/BAIL only (removed CAUTION) for more decisive feedback
