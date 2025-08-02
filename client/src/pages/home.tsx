@@ -165,34 +165,39 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen text-white relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 cyber-grid opacity-20"></div>
+      <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl floating-animation"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl floating-animation" style={{animationDelay: '2s'}}></div>
+      
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="relative z-10 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              <span className="text-red-500">BuildOrBail</span>
+            <h1 className="text-5xl md:text-7xl font-black mb-6">
+              <span className="gradient-text neon-text">BuildOrBail</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 font-bold">
-              The Brutally Honest App Idea Validator
+            <p className="text-2xl md:text-3xl text-gray-200 font-bold mb-2">
+              AI-Powered Idea Validation
             </p>
-            <p className="text-lg text-gray-400 mt-4 max-w-3xl mx-auto">
-              We'll tell you the harsh truth about your app idea so you don't waste weeks building garbage
+            <p className="text-xl text-gray-300 mt-4 max-w-4xl mx-auto leading-relaxed">
+              Get brutally honest feedback on your app ideas before you waste time building something nobody wants
             </p>
             
             {/* Navigation Links */}
-            <div className="flex justify-center gap-4 mt-6">
+            <div className="flex justify-center gap-6 mt-8">
               <a 
                 href="/admin" 
-                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold transition-colors border border-gray-600"
+                className="glass-card px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-105 hover:neon-glow flex items-center gap-2"
               >
-                📊 Analytics Dashboard
+                <span className="text-purple-400">📊</span> Analytics Dashboard
               </a>
               <a 
                 href="/wall-of-shame" 
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition-colors"
+                className="glass-card px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-105 hover:neon-glow flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-pink-500/20"
               >
-                💀 Wall of Shame
+                <span className="text-red-400">💀</span> Wall of Shame
               </a>
             </div>
           </div>
@@ -201,9 +206,9 @@ export default function Home() {
 
       {/* Main Form Section */}
       {!currentResult && (
-        <section id="form-section" className="py-20">
+        <section id="form-section" className="py-20 relative z-10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 md:p-12">
+            <div className="glass-card p-8 md:p-12 pulse-glow">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   <FormField
@@ -211,13 +216,13 @@ export default function Home() {
                     name="appName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xl font-bold text-red-400 mb-4 block">
+                        <FormLabel className="text-xl font-bold gradient-text mb-4 block">
                           What's your app called?
                         </FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Give your doomed idea a name..." 
-                            className="bg-gray-900 border-gray-600 text-white placeholder-gray-500 text-lg p-4 focus:border-red-500 focus:ring-red-500"
+                            placeholder="Give your revolutionary idea a name..." 
+                            className="glass-card border-white/20 text-white placeholder-gray-400 text-lg p-6 focus:border-purple-500 focus:ring-purple-500 focus:ring-2 transition-all duration-300"
                             {...field} 
                           />
                         </FormControl>
@@ -231,14 +236,14 @@ export default function Home() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xl font-bold text-red-400 mb-4 block">
+                        <FormLabel className="text-xl font-bold gradient-text mb-4 block">
                           Describe your app idea in detail
                         </FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Spill everything. What does it do? Why would anyone care? Don't hold back..." 
+                            placeholder="Paint the vision. What problem does it solve? What makes it special? Be thorough..." 
                             rows={6}
-                            className="bg-gray-900 border-gray-600 text-white placeholder-gray-500 text-lg p-6 resize-none focus:border-red-500 focus:ring-red-500"
+                            className="glass-card border-white/20 text-white placeholder-gray-400 text-lg p-6 resize-none focus:border-purple-500 focus:ring-purple-500 focus:ring-2 transition-all duration-300"
                             {...field} 
                           />
                         </FormControl>
@@ -253,13 +258,13 @@ export default function Home() {
                       name="targetMarket"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-lg font-bold text-red-400 mb-3 block">
+                          <FormLabel className="text-lg font-bold gradient-text mb-3 block">
                             What's your target audience?
                           </FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Be specific. 'Everyone' is not an answer." 
-                              className="bg-gray-900 border-gray-600 text-white placeholder-gray-500 text-lg p-4 focus:border-red-500 focus:ring-red-500"
+                              placeholder="Be specific. Demographics, psychographics, use cases..." 
+                              className="glass-card border-white/20 text-white placeholder-gray-400 text-lg p-4 focus:border-purple-500 focus:ring-purple-500 focus:ring-2 transition-all duration-300"
                               {...field} 
                             />
                           </FormControl>
@@ -273,13 +278,13 @@ export default function Home() {
                       name="budget"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-lg font-bold text-red-400 mb-3 block">
-                            How will you make money?
+                          <FormLabel className="text-lg font-bold gradient-text mb-3 block">
+                            How will you monetize?
                           </FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Ads? Subscriptions? Magic?" 
-                              className="bg-gray-900 border-gray-600 text-white placeholder-gray-500 text-lg p-4 focus:border-red-500 focus:ring-red-500"
+                              placeholder="Freemium? Subscriptions? One-time? Commission?" 
+                              className="glass-card border-white/20 text-white placeholder-gray-400 text-lg p-4 focus:border-purple-500 focus:ring-purple-500 focus:ring-2 transition-all duration-300"
                               {...field} 
                             />
                           </FormControl>
@@ -289,20 +294,20 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="rounded-md border border-gray-600 p-6 bg-gray-900">
-                    <div className="flex items-start space-x-3">
+                  <div className="glass-card p-6 border border-white/20">
+                    <div className="flex items-start space-x-4">
                       <input
                         type="checkbox"
                         id="agreeToTerms"
                         defaultChecked={true}
-                        className="mt-1 h-5 w-5 rounded border-red-500 bg-gray-800 text-red-600 focus:ring-red-500 focus:ring-2"
+                        className="mt-1 h-6 w-6 rounded border-purple-500 bg-white/10 text-purple-600 focus:ring-purple-500 focus:ring-2"
                       />
-                      <div className="space-y-1 leading-none">
-                        <label htmlFor="agreeToTerms" className="text-red-400 font-bold text-lg cursor-pointer">
-                          I want brutally honest feedback
+                      <div className="space-y-2 leading-none">
+                        <label htmlFor="agreeToTerms" className="gradient-text font-bold text-lg cursor-pointer">
+                          I want AI-powered brutal honesty
                         </label>
-                        <p className="text-gray-400 text-sm">
-                          I understand this analysis will be harsh and might crush my dreams. I'm ready for the truth.
+                        <p className="text-gray-300 text-sm">
+                          I understand this analysis will be comprehensive and might challenge my assumptions. I'm ready for unfiltered insights.
                         </p>
                       </div>
                     </div>
@@ -312,17 +317,18 @@ export default function Home() {
                     <Button 
                       type="submit" 
                       disabled={isLoading}
-                      className="bg-red-600 hover:bg-red-700 text-white font-bold text-xl px-12 py-6 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transform transition-all hover:scale-105"
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-black text-2xl px-16 py-8 rounded-2xl shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transform transition-all duration-300 hover:scale-105 neon-glow"
                     >
                       {isLoading ? (
                         <>
-                          <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                          ANALYZING...
+                          <div className="animate-spin rounded-full h-8 w-8 border-3 border-white border-t-transparent mr-4"></div>
+                          ANALYZING WITH AI...
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-skull-crossbones mr-3"></i>
-                          BUILD OR BAIL
+                          <span className="mr-3">🚀</span>
+                          VALIDATE MY IDEA
+                          <span className="ml-3">🚀</span>
                         </>
                       )}
                     </Button>
@@ -336,27 +342,29 @@ export default function Home() {
 
       {/* Loading State */}
       {isLoading && (
-        <section className="py-20">
+        <section className="py-20 relative z-10">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="animate-spin rounded-full h-20 w-20 border-4 border-gray-600 border-t-red-500 mx-auto mb-8"></div>
-            <h3 className="text-3xl font-bold text-red-400 mb-6">{loadingMessage}</h3>
-            <div className="bg-gray-800 rounded-full h-3 overflow-hidden">
-              <div className="bg-red-500 h-full animate-pulse" style={{ width: '75%' }}></div>
+            <div className="glass-card p-12 rounded-3xl pulse-glow">
+              <div className="animate-spin rounded-full h-24 w-24 border-4 border-white/20 border-t-purple-500 mx-auto mb-8"></div>
+              <h3 className="text-4xl font-bold gradient-text mb-6 neon-text">{loadingMessage}</h3>
+              <div className="bg-white/10 rounded-full h-4 overflow-hidden backdrop-blur-sm">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-full animate-pulse" style={{ width: '75%' }}></div>
+              </div>
+              <p className="text-gray-300 mt-6 text-xl">AI is analyzing your concept...</p>
             </div>
-            <p className="text-gray-400 mt-4 text-lg">This might hurt...</p>
           </div>
         </section>
       )}
 
       {/* Results Section with Dramatic Animations */}
       {currentResult && showResults && (
-        <section id="results" className="py-20 min-h-screen">
+        <section id="results" className="py-20 min-h-screen relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Main Verdict with Dramatic Animation */}
             <div className={`text-center mb-16 transition-all duration-1000 ${animateVerdict ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <div className={`inline-block p-8 rounded-2xl ${currentResult.verdict === 'BAIL' ? 'bg-red-900/50 border-4 border-red-500 animate-pulse' : 'bg-green-900/50 border-4 border-green-500'}`}>
-                <h2 className={`text-7xl md:text-9xl font-black mb-6 ${getVerdictColor(currentResult.verdict)} animate-bounce`}>
+              <div className={`glass-card p-12 rounded-3xl ${currentResult.verdict === 'BAIL' ? 'border-red-500 neon-glow bg-red-500/10' : 'border-green-500 neon-glow bg-green-500/10'}`}>
+                <h2 className={`text-7xl md:text-9xl font-black mb-6 ${getVerdictColor(currentResult.verdict)} neon-text floating-animation`}>
                   {getVerdictText(currentResult.verdict)}
                 </h2>
                 {currentResult.verdict === 'BAIL' && (

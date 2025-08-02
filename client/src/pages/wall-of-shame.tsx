@@ -51,29 +51,34 @@ export default function WallOfShame() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen text-white relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 cyber-grid opacity-20"></div>
+      <div className="absolute top-20 left-10 w-72 h-72 bg-red-500/20 rounded-full blur-3xl floating-animation"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl floating-animation" style={{animationDelay: '2s'}}></div>
+      
       {/* Header */}
-      <div className="bg-black border-b border-red-600">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="relative z-10 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-5xl font-black text-red-400">💀 WALL OF SHAME</h1>
-              <p className="text-gray-400 mt-2 text-lg">
-                The worst app ideas ever submitted • {shameList.length} total disasters
+              <h1 className="text-5xl font-black gradient-text neon-text">💀 Learning Gallery</h1>
+              <p className="text-gray-300 mt-3 text-lg">
+                Case studies from unsuccessful validations • {shameList.length} learning opportunities
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <a 
                 href="/admin" 
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-bold transition-colors"
+                className="glass-card px-4 py-2 rounded-xl font-bold transition-all duration-300 hover:scale-105"
               >
                 📊 Analytics
               </a>
               <a 
                 href="/" 
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition-colors"
+                className="glass-card px-4 py-2 rounded-xl font-bold transition-all duration-300 hover:scale-105 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
               >
-                ← Destroy Another Idea
+                ← Validate New Idea
               </a>
             </div>
           </div>
