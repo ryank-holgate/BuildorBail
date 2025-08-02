@@ -271,12 +271,12 @@ export default function Home() {
                       {isLoading ? (
                         <>
                           <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                          DESTROYING...
+                          ANALYZING...
                         </>
                       ) : (
                         <>
                           <i className="fas fa-skull-crossbones mr-3"></i>
-                          DESTROY MY IDEA
+                          BUILD OR BAIL
                         </>
                       )}
                     </Button>
