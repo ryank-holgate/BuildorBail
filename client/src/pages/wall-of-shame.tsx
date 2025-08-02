@@ -62,7 +62,7 @@ export default function WallOfShame() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-5xl font-black gradient-text neon-text">💀 Learning Gallery</h1>
+              <h1 className="text-5xl font-black gradient-text neon-text">Wall of Shame</h1>
               <p className="text-gray-300 mt-3 text-lg">
                 Case studies from unsuccessful validations • {shameList.length} learning opportunities
               </p>
