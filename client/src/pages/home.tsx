@@ -179,6 +179,22 @@ export default function Home() {
             <p className="text-lg text-gray-400 mt-4 max-w-3xl mx-auto">
               We'll tell you the harsh truth about your app idea so you don't waste weeks building garbage
             </p>
+            
+            {/* Navigation Links */}
+            <div className="flex justify-center gap-4 mt-6">
+              <a 
+                href="/admin" 
+                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold transition-colors border border-gray-600"
+              >
+                📊 Analytics Dashboard
+              </a>
+              <a 
+                href="/wall-of-shame" 
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition-colors"
+              >
+                💀 Wall of Shame
+              </a>
+            </div>
           </div>
         </div>
       </header>
