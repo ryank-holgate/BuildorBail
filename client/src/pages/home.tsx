@@ -326,9 +326,9 @@ export default function Home() {
                         </>
                       ) : (
                         <>
-                          <span className="mr-3">🚀</span>
-                          VALIDATE MY IDEA
-                          <span className="ml-3">🚀</span>
+                          <span className="mr-3">💀</span>
+                          BUILD OR BAIL
+                          <span className="ml-3">💀</span>
                         </>
                       )}
                     </Button>
