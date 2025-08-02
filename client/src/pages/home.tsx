@@ -325,11 +325,7 @@ export default function Home() {
                           ANALYZING WITH AI...
                         </>
                       ) : (
-                        <>
-                          <span className="mr-3">💀</span>
-                          BUILD OR BAIL
-                          <span className="ml-3">💀</span>
-                        </>
+                        "BUILD OR BAIL"
                       )}
                     </Button>
                   </div>
