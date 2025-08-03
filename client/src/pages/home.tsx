@@ -19,6 +19,8 @@ export default function Home() {
   const [showResults, setShowResults] = useState(false);
   const [animateVerdict, setAnimateVerdict] = useState(false);
   const [flipCards, setFlipCards] = useState([false, false, false, false]);
+  const [showActionPlan, setShowActionPlan] = useState(false);
+  const [expandedActionCard, setExpandedActionCard] = useState<string | null>(null);
   const { toast } = useToast();
 
   const brutalMessages = [
@@ -119,6 +121,8 @@ export default function Home() {
     setShowResults(false);
     setAnimateVerdict(false);
     setFlipCards([false, false, false, false]);
+    setShowActionPlan(false);
+    setExpandedActionCard(null);
     form.reset();
     
     setTimeout(() => {
@@ -559,6 +563,160 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Show Action Plan Button - Only show for BAIL verdicts */}
+            {currentResult.verdict === "BAIL" && !showActionPlan && (
+              <div className="text-center mb-12">
+                <Button 
+                  onClick={() => setShowActionPlan(true)}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-12 py-6 rounded-lg transform transition-all hover:scale-105 shadow-lg neon-glow"
+                >
+                  🚀 Show Me How to Fix This
+                </Button>
+                <p className="text-green-400 mt-4 text-lg font-semibold">
+                  Every great app started with a terrible first idea
+                </p>
+              </div>
+            )}
+
+            {/* Constructive Action Plan Section */}
+            {showActionPlan && (
+              <div className="mt-16 animate-fade-in">
+                {/* Header */}
+                <div className="text-center mb-12">
+                  <h2 className="text-4xl font-black gradient-text neon-text mb-4">
+                    🌟 Don't Give Up - Here's How to Fix It
+                  </h2>
+                  <p className="text-green-300 text-lg">
+                    Transform your idea from BAIL to BUILD with these actionable steps
+                  </p>
+                </div>
+
+                {/* Action Plan Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                  
+                  {/* Actionable Steps Card */}
+                  <div className={`glass-card border-green-400/50 bg-green-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'steps' ? 'scale-105' : ''}`} 
+                       onClick={() => setExpandedActionCard(expandedActionCard === 'steps' ? null : 'steps')}>
+                    <h3 className="text-2xl font-bold text-green-400 mb-6 flex items-center">
+                      <span className="text-3xl mr-3">✅</span>
+                      Actionable Steps
+                    </h3>
+                    <div className={`transition-all duration-300 ${expandedActionCard === 'steps' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                      <ul className="space-y-3 text-gray-200">
+                        {((currentResult as any).brutalAnalysis?.actionable_steps || []).map((step: string, index: number) => (
+                          <li key={index} className="flex items-start space-x-3">
+                            <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                              {index + 1}
+                            </span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <p className="text-green-300 text-sm mt-4">
+                      {expandedActionCard === 'steps' ? '↑ Click to collapse' : '↓ Click to expand'}
+                    </p>
+                  </div>
+
+                  {/* Differentiation Strategy Card */}
+                  <div className={`glass-card border-blue-400/50 bg-blue-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'differentiation' ? 'scale-105' : ''}`} 
+                       onClick={() => setExpandedActionCard(expandedActionCard === 'differentiation' ? null : 'differentiation')}>
+                    <h3 className="text-2xl font-bold text-blue-400 mb-6 flex items-center">
+                      <span className="text-3xl mr-3">🚀</span>
+                      Differentiation Strategy
+                    </h3>
+                    <div className={`transition-all duration-300 ${expandedActionCard === 'differentiation' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                      <p className="text-gray-200 leading-relaxed">
+                        {(currentResult as any).brutalAnalysis?.differentiation_strategy || "Strategy advice not available"}
+                      </p>
+                    </div>
+                    <p className="text-blue-300 text-sm mt-4">
+                      {expandedActionCard === 'differentiation' ? '↑ Click to collapse' : '↓ Click to expand'}
+                    </p>
+                  </div>
+
+                  {/* Pivot Suggestions Card */}
+                  <div className={`glass-card border-purple-400/50 bg-purple-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'pivot' ? 'scale-105' : ''}`} 
+                       onClick={() => setExpandedActionCard(expandedActionCard === 'pivot' ? null : 'pivot')}>
+                    <h3 className="text-2xl font-bold text-purple-400 mb-6 flex items-center">
+                      <span className="text-3xl mr-3">🔄</span>
+                      Pivot Options
+                    </h3>
+                    <div className={`transition-all duration-300 ${expandedActionCard === 'pivot' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                      <ul className="space-y-3 text-gray-200">
+                        {((currentResult as any).brutalAnalysis?.pivot_suggestions || []).map((pivot: string, index: number) => (
+                          <li key={index} className="flex items-start space-x-3">
+                            <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                              {index + 1}
+                            </span>
+                            <span>{pivot}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <p className="text-purple-300 text-sm mt-4">
+                      {expandedActionCard === 'pivot' ? '↑ Click to collapse' : '↓ Click to expand'}
+                    </p>
+                  </div>
+
+                  {/* Validation Plan Card */}
+                  <div className={`glass-card border-orange-400/50 bg-orange-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'validation' ? 'scale-105' : ''}`} 
+                       onClick={() => setExpandedActionCard(expandedActionCard === 'validation' ? null : 'validation')}>
+                    <h3 className="text-2xl font-bold text-orange-400 mb-6 flex items-center">
+                      <span className="text-3xl mr-3">🔍</span>
+                      Validation Plan
+                    </h3>
+                    <div className={`transition-all duration-300 ${expandedActionCard === 'validation' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                      <ul className="space-y-3 text-gray-200">
+                        {((currentResult as any).brutalAnalysis?.validation_steps || []).map((step: string, index: number) => (
+                          <li key={index} className="flex items-start space-x-3">
+                            <span className="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                              {index + 1}
+                            </span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <p className="text-orange-300 text-sm mt-4">
+                      {expandedActionCard === 'validation' ? '↑ Click to collapse' : '↓ Click to expand'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Save Action Plan Button */}
+                <div className="text-center mb-8">
+                  <Button 
+                    onClick={() => {
+                      const actionPlan = {
+                        idea: currentResult.appIdea.appName,
+                        actionable_steps: (currentResult as any).brutalAnalysis?.actionable_steps || [],
+                        differentiation_strategy: (currentResult as any).brutalAnalysis?.differentiation_strategy || "",
+                        pivot_suggestions: (currentResult as any).brutalAnalysis?.pivot_suggestions || [],
+                        validation_steps: (currentResult as any).brutalAnalysis?.validation_steps || []
+                      };
+                      
+                      const blob = new Blob([JSON.stringify(actionPlan, null, 2)], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${currentResult.appIdea.appName.replace(/\s+/g, '_')}_action_plan.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      
+                      toast({
+                        title: "Action Plan Saved!",
+                        description: "Your improvement plan has been downloaded. Time to get building!"
+                      });
+                    }}
+                    className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold text-lg px-8 py-3 rounded-lg transform transition-all hover:scale-105 shadow-lg"
+                  >
+                    💾 Save My Action Plan
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="text-center space-y-4">

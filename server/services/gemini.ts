@@ -42,7 +42,16 @@ export async function brutallyAnalyzeAppIdea(appIdea: InsertAppIdea): Promise<Br
 Target audience: ${appIdea.targetMarket}
 Monetization plan: ${appIdea.budget}
 
-Your job is to provide a harsh but constructive analysis. Return a JSON response with:
+Your job is to provide a harsh but constructive analysis. First destroy their idea with brutal honesty, then help them fix it.
+
+After your brutal analysis, provide constructive guidance:
+- Give 3-5 specific actionable steps to improve this idea
+- Suggest ways to differentiate from existing competition  
+- Recommend 2-3 pivot approaches that could work better
+- Provide validation steps they should take before coding
+- Be constructive but still maintain brutal honesty about realistic expectations
+
+Return a JSON response with:
 
 {
   "verdict": "BUILD" or "BAIL",
@@ -64,10 +73,19 @@ Your job is to provide a harsh but constructive analysis. Return a JSON response
     "analysis": "Why their money-making plan won't work"
   },
   "fatal_flaws": ["list of major problems"],
-  "time_saved_hours": estimated_hours_saved_by_not_building
+  "time_saved_hours": estimated_hours_saved_by_not_building,
+  "actionable_steps": ["3-5 specific actionable recommendations to improve the idea"],
+  "differentiation_strategy": "detailed advice on how to make this idea unique and marketable",
+  "pivot_suggestions": ["2-3 alternative approaches to the same problem"],
+  "validation_steps": ["ways to test market demand before building"]
 }
 
-Be extremely harsh. Only give BUILD verdict if genuinely promising. Use phrases like 'market reality check', 'competition crusher', 'technical difficulty bomb'. Include specific data and examples.`;
+Examples of good actionable feedback tone:
+- "Stop building a generic social media app. Instead, focus on pet owners in urban areas - that's a $2B niche you can actually dominate."
+- "Your tech stack is overkill. Start with a simple landing page and manual backend. Prove demand first, then automate."
+- "Instead of competing with Uber, pivot to specialized transport: medical appointments, elderly care, or pet transport."
+
+Be extremely harsh in analysis but genuinely helpful in guidance. Only give BUILD verdict if genuinely promising. Use phrases like 'market reality check', 'competition crusher', 'technical difficulty bomb'. Include specific data and examples.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -112,9 +130,13 @@ Be extremely harsh. Only give BUILD verdict if genuinely promising. Use phrases 
               required: ["score", "analysis"]
             },
             fatal_flaws: { type: "array", items: { type: "string" } },
+            actionable_steps: { type: "array", items: { type: "string" } },
+            differentiation_strategy: { type: "string" },
+            pivot_suggestions: { type: "array", items: { type: "string" } },
+            validation_steps: { type: "array", items: { type: "string" } },
             time_saved_hours: { type: "number" }
           },
-          required: ["verdict", "overall_score", "market_reality", "competition_analysis", "technical_feasibility", "monetization_reality", "fatal_flaws", "time_saved_hours"]
+          required: ["verdict", "overall_score", "market_reality", "competition_analysis", "technical_feasibility", "monetization_reality", "fatal_flaws", "time_saved_hours", "actionable_steps", "differentiation_strategy", "pivot_suggestions", "validation_steps"]
         }
       },
       contents: prompt,

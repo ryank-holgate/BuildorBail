@@ -111,6 +111,17 @@ The application is designed for deployment on platforms like Replit, with automa
 
 ## Recent Changes
 
+### August 3, 2025 - Constructive Guidance & Action Plans
+- **Enhanced AI Analysis**: Updated Gemini prompt to provide actionable feedback alongside brutal honesty
+- **New Response Fields**: Added actionable_steps, differentiation_strategy, pivot_suggestions, and validation_steps to API
+- **Action Plan Section**: "Don't Give Up - Here's How to Fix It" section with expandable cards for constructive guidance
+- **Encouraging UX Flow**: "Show Me How to Fix This" button reveals actionable steps with slide-down animation
+- **Downloadable Action Plans**: Save My Action Plan button exports improvement recommendations as JSON
+- **Color-Coded Guidance**: Green-themed constructive section contrasts with red brutal analysis section
+- **Interactive Cards**: Click-to-expand cards for Actionable Steps, Differentiation Strategy, Pivot Options, and Validation Plan
+- **Motivational Messaging**: "Every great app started with a terrible first idea" encourages persistence
+- **State Management**: Proper reset of action plan visibility when validating new ideas
+
 ### February 2, 2025 - Modern UI Redesign with Glass Morphism
 - **Complete Visual Overhaul**: Transformed from brutal red theme to sophisticated purple/blue gradient design system
 - **Glass Morphism Design**: Applied glass morphism principles throughout with backdrop blur, transparent cards, and subtle borders

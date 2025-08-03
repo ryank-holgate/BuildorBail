@@ -58,7 +58,7 @@ router.post("/api/analyze", async (req, res) => {
       ] : [],
       detailedAnalysis: `Market Score: ${analysis.market_reality.score}/10 - ${analysis.market_reality.analysis}\n\nCompetition Score: ${analysis.competition_analysis.score}/10 - ${analysis.competition_analysis.analysis}\n\nTechnical Score: ${analysis.technical_feasibility.score}/10 - ${analysis.technical_feasibility.analysis}\n\nMonetization Score: ${analysis.monetization_reality.score}/10 - ${analysis.monetization_reality.analysis}`,
       actionItems: analysis.fatal_flaws.map((flaw, index) => `Fatal Flaw ${index + 1}: ${flaw}`),
-      brutalAnalysis: analysis
+      brutalAnalysis: analysis as any
     });
 
     // Update analytics
