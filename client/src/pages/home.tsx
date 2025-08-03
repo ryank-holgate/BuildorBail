@@ -401,27 +401,29 @@ export default function Home() {
             </div>
 
             {/* Flip Card Analysis Sections */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 px-4">
               
               {/* Market Reality Flip Card */}
               <div className={`flip-card ${flipCards[0] ? 'flipped' : ''}`} onClick={() => setFlipCards([!flipCards[0], flipCards[1], flipCards[2], flipCards[3]])}>
                 <div className="flip-card-inner">
-                  <div className="flip-card-front glass-card border-white/20 p-6 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">📊</div>
-                      <h3 className="text-2xl font-bold gradient-text">Market Reality</h3>
-                      <p className="text-gray-300 mt-2">Click to reveal analysis</p>
+                  <div className="flip-card-front glass-card border-white/20 p-8 cursor-pointer hover:scale-105 transition-transform duration-300">
+                    <div className="text-center h-full flex flex-col justify-center">
+                      <div className="text-6xl mb-6">📊</div>
+                      <h3 className="text-2xl font-bold gradient-text mb-3">Market Reality</h3>
+                      <p className="text-gray-300">Click to reveal analysis</p>
                     </div>
                   </div>
-                  <div className="flip-card-back glass-card border-red-400/50 bg-red-500/10 p-6">
-                    <h3 className="text-xl font-bold text-red-400 mb-4 flex items-center justify-between">
-                      <span>📊 Market Reality</span>
-                      <span className="text-2xl neon-text">
-                        {(currentResult as any).brutalAnalysis?.market_reality?.score || Math.floor(currentResult.score)}/10
-                      </span>
-                    </h3>
-                    <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto max-h-48">
-                      {(currentResult as any).brutalAnalysis?.market_reality?.analysis || currentResult.detailedAnalysis.split('\n\n')[0]}
+                  <div className="flip-card-back glass-card border-red-400/50 bg-red-500/10 p-8">
+                    <div className="h-full flex flex-col">
+                      <h3 className="text-xl font-bold text-red-400 mb-4 flex items-center justify-between">
+                        <span>📊 Market Reality</span>
+                        <span className="text-2xl neon-text">
+                          {(currentResult as any).brutalAnalysis?.market_reality?.score || Math.floor(currentResult.score)}/10
+                        </span>
+                      </h3>
+                      <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto flex-1">
+                        {(currentResult as any).brutalAnalysis?.market_reality?.analysis || currentResult.detailedAnalysis.split('\n\n')[0]}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -430,22 +432,24 @@ export default function Home() {
               {/* Competition Crusher Flip Card */}
               <div className={`flip-card ${flipCards[1] ? 'flipped' : ''}`} onClick={() => setFlipCards([flipCards[0], !flipCards[1], flipCards[2], flipCards[3]])}>
                 <div className="flip-card-inner">
-                  <div className="flip-card-front glass-card border-white/20 p-6 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">⚔️</div>
-                      <h3 className="text-2xl font-bold gradient-text">Competition Analysis</h3>
-                      <p className="text-gray-300 mt-2">Click to reveal analysis</p>
+                  <div className="flip-card-front glass-card border-white/20 p-8 cursor-pointer hover:scale-105 transition-transform duration-300">
+                    <div className="text-center h-full flex flex-col justify-center">
+                      <div className="text-6xl mb-6">⚔️</div>
+                      <h3 className="text-2xl font-bold gradient-text mb-3">Competition Analysis</h3>
+                      <p className="text-gray-300">Click to reveal analysis</p>
                     </div>
                   </div>
-                  <div className="flip-card-back glass-card border-orange-400/50 bg-orange-500/10 p-6">
-                    <h3 className="text-xl font-bold text-orange-400 mb-4 flex items-center justify-between">
-                      <span>⚔️ Competition Crusher</span>
-                      <span className="text-2xl neon-text">
-                        {(currentResult as any).brutalAnalysis?.competition_analysis?.score || Math.floor(currentResult.score * 0.8)}/10
-                      </span>
-                    </h3>
-                    <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto max-h-48">
-                      {(currentResult as any).brutalAnalysis?.competition_analysis?.analysis || "Your competition will destroy you. Everyone has thought of this already."}
+                  <div className="flip-card-back glass-card border-orange-400/50 bg-orange-500/10 p-8">
+                    <div className="h-full flex flex-col">
+                      <h3 className="text-xl font-bold text-orange-400 mb-4 flex items-center justify-between">
+                        <span>⚔️ Competition Crusher</span>
+                        <span className="text-2xl neon-text">
+                          {(currentResult as any).brutalAnalysis?.competition_analysis?.score || Math.floor(currentResult.score * 0.8)}/10
+                        </span>
+                      </h3>
+                      <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto flex-1">
+                        {(currentResult as any).brutalAnalysis?.competition_analysis?.analysis || "Your competition will destroy you. Everyone has thought of this already."}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -454,22 +458,24 @@ export default function Home() {
               {/* Technical Difficulty Bomb */}
               <div className={`flip-card ${flipCards[2] ? 'flipped' : ''}`} onClick={() => setFlipCards([flipCards[0], flipCards[1], !flipCards[2], flipCards[3]])}>
                 <div className="flip-card-inner">
-                  <div className="flip-card-front glass-card border-white/20 p-6 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">💣</div>
-                      <h3 className="text-2xl font-bold gradient-text">Technical Feasibility</h3>
-                      <p className="text-gray-300 mt-2">Click to reveal analysis</p>
+                  <div className="flip-card-front glass-card border-white/20 p-8 cursor-pointer hover:scale-105 transition-transform duration-300">
+                    <div className="text-center h-full flex flex-col justify-center">
+                      <div className="text-6xl mb-6">💣</div>
+                      <h3 className="text-2xl font-bold gradient-text mb-3">Technical Feasibility</h3>
+                      <p className="text-gray-300">Click to reveal analysis</p>
                     </div>
                   </div>
-                  <div className="flip-card-back glass-card border-yellow-400/50 bg-yellow-500/10 p-6">
-                    <h3 className="text-xl font-bold text-yellow-400 mb-4 flex items-center justify-between">
-                      <span>💣 Technical Bomb</span>
-                      <span className="text-2xl neon-text">
-                        {(currentResult as any).brutalAnalysis?.technical_feasibility?.score || Math.floor(currentResult.score * 0.9)}/10
-                      </span>
-                    </h3>
-                    <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto max-h-48">
-                      {(currentResult as any).brutalAnalysis?.technical_feasibility?.analysis || "The technical challenges will crush you before you even start."}
+                  <div className="flip-card-back glass-card border-yellow-400/50 bg-yellow-500/10 p-8">
+                    <div className="h-full flex flex-col">
+                      <h3 className="text-xl font-bold text-yellow-400 mb-4 flex items-center justify-between">
+                        <span>💣 Technical Bomb</span>
+                        <span className="text-2xl neon-text">
+                          {(currentResult as any).brutalAnalysis?.technical_feasibility?.score || Math.floor(currentResult.score * 0.9)}/10
+                        </span>
+                      </h3>
+                      <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto flex-1">
+                        {(currentResult as any).brutalAnalysis?.technical_feasibility?.analysis || "The technical challenges will crush you before you even start."}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -478,22 +484,24 @@ export default function Home() {
               {/* Monetization Reality Check */}
               <div className={`flip-card ${flipCards[3] ? 'flipped' : ''}`} onClick={() => setFlipCards([flipCards[0], flipCards[1], flipCards[2], !flipCards[3]])}>
                 <div className="flip-card-inner">
-                  <div className="flip-card-front glass-card border-white/20 p-6 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">💸</div>
-                      <h3 className="text-2xl font-bold gradient-text">Monetization Reality</h3>
-                      <p className="text-gray-300 mt-2">Click to reveal analysis</p>
+                  <div className="flip-card-front glass-card border-white/20 p-8 cursor-pointer hover:scale-105 transition-transform duration-300">
+                    <div className="text-center h-full flex flex-col justify-center">
+                      <div className="text-6xl mb-6">💸</div>
+                      <h3 className="text-2xl font-bold gradient-text mb-3">Monetization Reality</h3>
+                      <p className="text-gray-300">Click to reveal analysis</p>
                     </div>
                   </div>
-                  <div className="flip-card-back glass-card border-green-400/50 bg-green-500/10 p-6">
-                    <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center justify-between">
-                      <span>💸 Money Reality</span>
-                      <span className="text-2xl neon-text">
-                        {(currentResult as any).brutalAnalysis?.monetization_reality?.score || Math.floor(currentResult.score * 0.7)}/10
-                      </span>
-                    </h3>
-                    <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto max-h-48">
-                      {(currentResult as any).brutalAnalysis?.monetization_reality?.analysis || "Your monetization plan is fantasy. Nobody will pay for this."}
+                  <div className="flip-card-back glass-card border-green-400/50 bg-green-500/10 p-8">
+                    <div className="h-full flex flex-col">
+                      <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center justify-between">
+                        <span>💸 Money Reality</span>
+                        <span className="text-2xl neon-text">
+                          {(currentResult as any).brutalAnalysis?.monetization_reality?.score || Math.floor(currentResult.score * 0.7)}/10
+                        </span>
+                      </h3>
+                      <div className="text-gray-200 text-sm leading-relaxed overflow-y-auto flex-1">
+                        {(currentResult as any).brutalAnalysis?.monetization_reality?.analysis || "Your monetization plan is fantasy. Nobody will pay for this."}
+                      </div>
                     </div>
                   </div>
                 </div>
