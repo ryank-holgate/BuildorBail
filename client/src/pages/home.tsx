@@ -20,7 +20,6 @@ export default function Home() {
   const [animateVerdict, setAnimateVerdict] = useState(false);
   const [flipCards, setFlipCards] = useState([false, false, false, false]);
   const [showActionPlan, setShowActionPlan] = useState(false);
-  const [expandedActionCard, setExpandedActionCard] = useState<string | null>(null);
   const { toast } = useToast();
 
   const brutalMessages = [
@@ -122,7 +121,6 @@ export default function Home() {
     setAnimateVerdict(false);
     setFlipCards([false, false, false, false]);
     setShowActionPlan(false);
-    setExpandedActionCard(null);
     form.reset();
     
     setTimeout(() => {
@@ -596,13 +594,12 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                   
                   {/* Actionable Steps Card */}
-                  <div className={`glass-card border-green-400/50 bg-green-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'steps' ? 'scale-105' : ''}`} 
-                       onClick={() => setExpandedActionCard(expandedActionCard === 'steps' ? null : 'steps')}>
+                  <div className="glass-card border-green-400/50 bg-green-500/10 p-8 transition-all duration-300">
                     <h3 className="text-2xl font-bold text-green-400 mb-6 flex items-center">
                       <span className="text-3xl mr-3">✅</span>
                       Actionable Steps
                     </h3>
-                    <div className={`transition-all duration-300 ${expandedActionCard === 'steps' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                    <div className="max-h-96 overflow-y-auto">
                       <ul className="space-y-3 text-gray-200">
                         {((currentResult as any).brutalAnalysis?.actionable_steps || []).map((step: string, index: number) => (
                           <li key={index} className="flex items-start space-x-3">
@@ -614,36 +611,28 @@ export default function Home() {
                         ))}
                       </ul>
                     </div>
-                    <p className="text-green-300 text-sm mt-4">
-                      {expandedActionCard === 'steps' ? '↑ Click to collapse' : '↓ Click to expand'}
-                    </p>
                   </div>
 
                   {/* Differentiation Strategy Card */}
-                  <div className={`glass-card border-blue-400/50 bg-blue-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'differentiation' ? 'scale-105' : ''}`} 
-                       onClick={() => setExpandedActionCard(expandedActionCard === 'differentiation' ? null : 'differentiation')}>
+                  <div className="glass-card border-blue-400/50 bg-blue-500/10 p-8 transition-all duration-300">
                     <h3 className="text-2xl font-bold text-blue-400 mb-6 flex items-center">
                       <span className="text-3xl mr-3">🚀</span>
                       Differentiation Strategy
                     </h3>
-                    <div className={`transition-all duration-300 ${expandedActionCard === 'differentiation' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                    <div className="max-h-96 overflow-y-auto">
                       <p className="text-gray-200 leading-relaxed">
                         {(currentResult as any).brutalAnalysis?.differentiation_strategy || "Strategy advice not available"}
                       </p>
                     </div>
-                    <p className="text-blue-300 text-sm mt-4">
-                      {expandedActionCard === 'differentiation' ? '↑ Click to collapse' : '↓ Click to expand'}
-                    </p>
                   </div>
 
                   {/* Pivot Suggestions Card */}
-                  <div className={`glass-card border-purple-400/50 bg-purple-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'pivot' ? 'scale-105' : ''}`} 
-                       onClick={() => setExpandedActionCard(expandedActionCard === 'pivot' ? null : 'pivot')}>
+                  <div className="glass-card border-purple-400/50 bg-purple-500/10 p-8 transition-all duration-300">
                     <h3 className="text-2xl font-bold text-purple-400 mb-6 flex items-center">
                       <span className="text-3xl mr-3">🔄</span>
                       Pivot Options
                     </h3>
-                    <div className={`transition-all duration-300 ${expandedActionCard === 'pivot' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                    <div className="max-h-96 overflow-y-auto">
                       <ul className="space-y-3 text-gray-200">
                         {((currentResult as any).brutalAnalysis?.pivot_suggestions || []).map((pivot: string, index: number) => (
                           <li key={index} className="flex items-start space-x-3">
@@ -655,19 +644,15 @@ export default function Home() {
                         ))}
                       </ul>
                     </div>
-                    <p className="text-purple-300 text-sm mt-4">
-                      {expandedActionCard === 'pivot' ? '↑ Click to collapse' : '↓ Click to expand'}
-                    </p>
                   </div>
 
                   {/* Validation Plan Card */}
-                  <div className={`glass-card border-orange-400/50 bg-orange-500/10 p-8 cursor-pointer transition-all duration-300 ${expandedActionCard === 'validation' ? 'scale-105' : ''}`} 
-                       onClick={() => setExpandedActionCard(expandedActionCard === 'validation' ? null : 'validation')}>
+                  <div className="glass-card border-orange-400/50 bg-orange-500/10 p-8 transition-all duration-300">
                     <h3 className="text-2xl font-bold text-orange-400 mb-6 flex items-center">
                       <span className="text-3xl mr-3">🔍</span>
                       Validation Plan
                     </h3>
-                    <div className={`transition-all duration-300 ${expandedActionCard === 'validation' ? 'max-h-96 overflow-y-auto' : 'max-h-24 overflow-hidden'}`}>
+                    <div className="max-h-96 overflow-y-auto">
                       <ul className="space-y-3 text-gray-200">
                         {((currentResult as any).brutalAnalysis?.validation_steps || []).map((step: string, index: number) => (
                           <li key={index} className="flex items-start space-x-3">
@@ -679,9 +664,6 @@ export default function Home() {
                         ))}
                       </ul>
                     </div>
-                    <p className="text-orange-300 text-sm mt-4">
-                      {expandedActionCard === 'validation' ? '↑ Click to collapse' : '↓ Click to expand'}
-                    </p>
                   </div>
                 </div>
 
