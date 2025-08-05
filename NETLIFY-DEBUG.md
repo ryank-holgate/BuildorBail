@@ -50,15 +50,21 @@ If Netlify continues to have issues:
 
 If you need to update the function:
 ```bash
-# Test locally first
+# Test the function structure
 cd netlify/functions
-node -e "console.log(require('./api.js'))"
+node -e "const api = require('./api.js'); console.log('Function loaded successfully');"
 
 # Deploy to Netlify
 git add .
 git commit -m "Update serverless function"
 git push
 ```
+
+## Testing the Function
+
+1. **Test Function Existence**: Visit `https://your-site.netlify.app/.netlify/functions/test`
+2. **Test API Function**: Visit `https://your-site.netlify.app/.netlify/functions/api` (should return 404 with debug info)
+3. **Check Logs**: Go to Netlify Dashboard → Functions → View logs to see console output
 
 ## Environment Variable Format
 
