@@ -62,6 +62,9 @@ export default function Home() {
       return response.json();
     },
     onSuccess: (result) => {
+      console.log("Validation result:", result);
+      console.log("Brutal analysis:", result.brutalAnalysis);
+      console.log("Actionable steps:", result.brutalAnalysis?.actionable_steps);
       setCurrentResult(result);
       setIsLoading(false);
       // Use the actual time saved from brutal analysis, or fallback to random
@@ -98,6 +101,10 @@ export default function Home() {
   const onSubmit = (data: any) => {
     setIsLoading(true);
     setCurrentResult(null);
+    setShowActionPlan(false); // Reset action plan state
+    setShowResults(false);
+    setAnimateVerdict(false);
+    setFlipCards([false, false, false, false]);
     
     // Cycle through brutal messages
     let messageIndex = 0;
@@ -600,16 +607,20 @@ export default function Home() {
                       Actionable Steps
                     </h3>
                     <div className="max-h-96 overflow-y-auto">
-                      <ul className="space-y-3 text-gray-200">
-                        {((currentResult as any).brutalAnalysis?.actionable_steps || []).map((step: string, index: number) => (
-                          <li key={index} className="flex items-start space-x-3">
-                            <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
-                              {index + 1}
-                            </span>
-                            <span>{step}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {((currentResult as any).brutalAnalysis?.actionable_steps?.length > 0) ? (
+                        <ul className="space-y-3 text-gray-200">
+                          {(currentResult as any).brutalAnalysis.actionable_steps.map((step: string, index: number) => (
+                            <li key={index} className="flex items-start space-x-3">
+                              <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                                {index + 1}
+                              </span>
+                              <span>{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-400 italic">No specific actionable steps available. Focus on addressing the fatal flaws listed above.</p>
+                      )}
                     </div>
                   </div>
 
@@ -633,16 +644,20 @@ export default function Home() {
                       Pivot Options
                     </h3>
                     <div className="max-h-96 overflow-y-auto">
-                      <ul className="space-y-3 text-gray-200">
-                        {((currentResult as any).brutalAnalysis?.pivot_suggestions || []).map((pivot: string, index: number) => (
-                          <li key={index} className="flex items-start space-x-3">
-                            <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
-                              {index + 1}
-                            </span>
-                            <span>{pivot}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {((currentResult as any).brutalAnalysis?.pivot_suggestions?.length > 0) ? (
+                        <ul className="space-y-3 text-gray-200">
+                          {(currentResult as any).brutalAnalysis.pivot_suggestions.map((pivot: string, index: number) => (
+                            <li key={index} className="flex items-start space-x-3">
+                              <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                                {index + 1}
+                              </span>
+                              <span>{pivot}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-400 italic">Consider pivoting to a different target market or solving a related but more specific problem.</p>
+                      )}
                     </div>
                   </div>
 
@@ -653,16 +668,20 @@ export default function Home() {
                       Validation Plan
                     </h3>
                     <div className="max-h-96 overflow-y-auto">
-                      <ul className="space-y-3 text-gray-200">
-                        {((currentResult as any).brutalAnalysis?.validation_steps || []).map((step: string, index: number) => (
-                          <li key={index} className="flex items-start space-x-3">
-                            <span className="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
-                              {index + 1}
-                            </span>
-                            <span>{step}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {((currentResult as any).brutalAnalysis?.validation_steps?.length > 0) ? (
+                        <ul className="space-y-3 text-gray-200">
+                          {(currentResult as any).brutalAnalysis.validation_steps.map((step: string, index: number) => (
+                            <li key={index} className="flex items-start space-x-3">
+                              <span className="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                                {index + 1}
+                              </span>
+                              <span>{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-400 italic">Start with a simple landing page to gauge interest before building the full app.</p>
+                      )}
                     </div>
                   </div>
                 </div>
