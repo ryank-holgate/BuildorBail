@@ -101,8 +101,19 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const path = event.path.replace('/.netlify/functions/api', '');
+    // Extract the path from the Netlify function URL
+    // For /api/analyze, Netlify redirects to /.netlify/functions/api/analyze
+    let path = event.path.replace('/.netlify/functions/api', '') || '/';
+    
     const method = event.httpMethod;
+    
+    console.log('Processing request:', {
+      originalPath: event.path,
+      processedPath: path,
+      method: method,
+      rawPath: event.rawPath,
+      pathParameters: event.pathParameters
+    });
 
     // Parse request body for POST requests
     let body = null;
@@ -118,8 +129,8 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // Route: POST /analyze
-    if (path === '/analyze' && method === 'POST') {
+    // Route: POST /analyze (handle both /analyze and analyze)
+    if ((path === '/analyze' || path === 'analyze') && method === 'POST') {
       if (!body) {
         return {
           statusCode: 400,
@@ -207,7 +218,7 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
     }
 
     // Route: GET /analytics
-    if (path === '/analytics' && method === 'GET') {
+    if ((path === '/analytics' || path === 'analytics') && method === 'GET') {
       return {
         statusCode: 200,
         headers,
@@ -226,7 +237,7 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
     }
 
     // Route: GET /results or /wall-of-shame
-    if ((path === '/results' || path === '/wall-of-shame') && method === 'GET') {
+    if ((path === '/results' || path === 'results' || path === '/wall-of-shame' || path === 'wall-of-shame') && method === 'GET') {
       return {
         statusCode: 200,
         headers,
