@@ -18,4 +18,5 @@
   NPM_FLAGS = "--production=false"
 
 [functions]
-  external_node_modules = ["@neondatabase/serverless", "drizzle-orm", "@google/genai", "ws", "zod"]
+  external_node_modules = ["@google/genai", "zod"]
+  node_bundler = "esbuild"

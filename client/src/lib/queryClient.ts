@@ -12,7 +12,14 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  // Use the correct API base URL for production
+  const baseUrl = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('netlify.com') 
+    ? '' // For Netlify, use relative URLs that will be redirected
+    : ''; // For local development, use relative URLs as well
+  
+  const fullUrl = baseUrl + url;
+  
+  const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
