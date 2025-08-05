@@ -183,10 +183,10 @@ export default function Home() {
               <span className="gradient-text neon-text">BuildOrBail</span>
             </h1>
             <p className="text-2xl md:text-3xl text-gray-200 font-bold mb-2">
-              AI-Powered Idea Validation
+              Brutally Honest Feedback + Actionable Improvement Tips
             </p>
             <p className="text-xl text-gray-300 mt-4 max-w-4xl mx-auto leading-relaxed">
-              Get brutally honest feedback on your app ideas before you waste time building something nobody wants
+              Get snarky reality checks on your app ideas, then discover exactly how to transform them into BUILD-worthy projects
             </p>
             
             {/* Navigation Links */}
