@@ -89,15 +89,28 @@ BuildOrBail is a full-stack web application that provides brutally honest AI-pow
 
 ## Deployment Strategy
 
-### Build Process
+### Multi-Platform Deployment
+The application supports deployment on multiple platforms:
+
+#### Replit Deployment (Primary)
 - **Client**: Vite builds React application to `dist/public`
 - **Server**: esbuild bundles Express server to `dist/index.js`
 - **Assets**: Static file serving in production mode
 - **Environment**: NODE_ENV-based configuration switching
+- **Database**: Automatic PostgreSQL provisioning
+- **Storage**: Full DatabaseStorage with all features
+
+#### Netlify Deployment (Secondary)
+- **Client**: React app served as static files from `dist/public`
+- **Backend**: Serverless functions in `netlify/functions/api.js`
+- **Configuration**: `netlify.toml` with redirects and build settings
+- **Database**: Neon PostgreSQL via serverless connection
+- **Limitations**: Simplified storage layer, mock analytics, basic rate limiting
+- **Requirements**: Manual environment variable setup (`DATABASE_URL`, `GEMINI_API_KEY`)
 
 ### Environment Configuration
 - **Development**: Vite dev server with HMR and runtime error overlay
-- **Production**: Express serves static files and API routes
+- **Production**: Platform-specific serving (Express for Replit, static + serverless for Netlify)
 - **Database**: Environment variable-based connection string
 - **AI Service**: API key configuration via environment variables
 
@@ -105,9 +118,10 @@ BuildOrBail is a full-stack web application that provides brutally honest AI-pow
 - **Shared**: Common schemas and types used by both client and server
 - **Client**: React application with UI components and pages
 - **Server**: Express API with services and storage abstraction
+- **Netlify**: Serverless function adaptations for Netlify deployment
 - **Root**: Configuration files and build scripts
 
-The application is designed for deployment on platforms like Replit, with automatic database provisioning and environment variable management. The storage layer uses an abstraction pattern that allows switching between in-memory and PostgreSQL storage based on environment configuration.
+The application uses an abstraction pattern that allows switching between platforms while maintaining core functionality. The Replit version provides full features, while the Netlify version is optimized for serverless constraints.
 
 ## Recent Changes
 
