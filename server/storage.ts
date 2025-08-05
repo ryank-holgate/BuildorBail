@@ -5,11 +5,9 @@ import {
   type InsertAppIdea,
   type InsertValidationResult,
   type RateLimit,
-  type Analytics,
   appIdeas,
   validationResults,
-  rateLimits,
-  analytics
+  rateLimits
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, gte, sql } from "drizzle-orm";
@@ -24,8 +22,7 @@ export interface IStorage {
   getAllValidationResults(): Promise<ValidationResultWithIdea[]>;
   checkRateLimit(userIp: string): Promise<{ allowed: boolean; remainingRequests: number }>;
   updateRateLimit(userIp: string): Promise<void>;
-  updateAnalytics(verdict: string, score: number, timeSaved?: number): Promise<void>;
-  getAnalytics(): Promise<Analytics | null>;
+
   getBailVerdicts(limit?: number): Promise<ValidationResultWithIdea[]>;
 }
 
@@ -170,43 +167,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async updateAnalytics(verdict: string, score: number, timeSaved: number = 0): Promise<void> {
-    // Get or create analytics record
-    let [analyticsRecord] = await db.select().from(analytics).limit(1);
 
-    if (!analyticsRecord) {
-      [analyticsRecord] = await db
-        .insert(analytics)
-        .values({
-          totalIdeasAnalyzed: 1,
-          totalBuildVerdicts: verdict === 'BUILD' ? 1 : 0,
-          totalBailVerdicts: verdict === 'BAIL' ? 1 : 0,
-          totalTimeSaved: timeSaved,
-          averageScore: score
-        })
-        .returning();
-    } else {
-      const newTotal = analyticsRecord.totalIdeasAnalyzed + 1;
-      const newAverage = ((analyticsRecord.averageScore * analyticsRecord.totalIdeasAnalyzed) + score) / newTotal;
-
-      await db
-        .update(analytics)
-        .set({
-          totalIdeasAnalyzed: newTotal,
-          totalBuildVerdicts: analyticsRecord.totalBuildVerdicts + (verdict === 'BUILD' ? 1 : 0),
-          totalBailVerdicts: analyticsRecord.totalBailVerdicts + (verdict === 'BAIL' ? 1 : 0),
-          totalTimeSaved: analyticsRecord.totalTimeSaved + timeSaved,
-          averageScore: newAverage,
-          updatedAt: new Date()
-        })
-        .where(eq(analytics.id, analyticsRecord.id));
-    }
-  }
-
-  async getAnalytics(): Promise<Analytics | null> {
-    const [analyticsRecord] = await db.select().from(analytics).limit(1);
-    return analyticsRecord || null;
-  }
 
   async getBailVerdicts(limit: number = 50): Promise<ValidationResultWithIdea[]> {
     const results = await db

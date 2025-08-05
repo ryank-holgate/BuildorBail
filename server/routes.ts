@@ -50,20 +50,18 @@ router.post("/api/analyze", async (req, res) => {
       strengths: analysis.verdict === "BUILD" ? [
         analysis.market_reality.analysis.substring(0, 100),
         analysis.technical_feasibility.analysis.substring(0, 100)
-      ] : [],
-      weaknesses: analysis.fatal_flaws,
+      ] as string[] : [] as string[],
+      weaknesses: analysis.fatal_flaws as string[],
       opportunities: analysis.verdict === "BUILD" ? [
         analysis.monetization_reality.analysis.substring(0, 100),
         analysis.competition_analysis.analysis.substring(0, 100)
-      ] : [],
+      ] as string[] : [] as string[],
       detailedAnalysis: `Market Score: ${analysis.market_reality.score}/10 - ${analysis.market_reality.analysis}\n\nCompetition Score: ${analysis.competition_analysis.score}/10 - ${analysis.competition_analysis.analysis}\n\nTechnical Score: ${analysis.technical_feasibility.score}/10 - ${analysis.technical_feasibility.analysis}\n\nMonetization Score: ${analysis.monetization_reality.score}/10 - ${analysis.monetization_reality.analysis}`,
-      actionItems: analysis.fatal_flaws.map((flaw, index) => `Fatal Flaw ${index + 1}: ${flaw}`),
+      actionItems: analysis.fatal_flaws.map((flaw, index) => `Fatal Flaw ${index + 1}: ${flaw}`) as string[],
       brutalAnalysis: analysis as any
     });
 
-    // Update analytics
-    const timeSaved = analysis.time_saved_hours || Math.floor(Math.random() * 120) + 40;
-    await storage.updateAnalytics(analysis.verdict, analysis.overall_score, timeSaved);
+
 
     // Return combined result
     res.json({
@@ -116,37 +114,6 @@ router.get("/api/results/:id", async (req, res) => {
     console.error("Error fetching result:", error);
     res.status(500).json({
       error: "Failed to fetch result",
-      message: error instanceof Error ? error.message : "Unknown error"
-    });
-  }
-});
-
-// Analytics dashboard endpoint
-router.get("/api/admin/analytics", async (req, res) => {
-  try {
-    const analytics = await storage.getAnalytics();
-    
-    if (!analytics) {
-      return res.json({
-        totalIdeasAnalyzed: 0,
-        totalBuildVerdicts: 0,
-        totalBailVerdicts: 0,
-        totalTimeSaved: 0,
-        averageScore: 0,
-        buildBailRatio: "0:0"
-      });
-    }
-
-    const buildBailRatio = `${analytics.totalBuildVerdicts}:${analytics.totalBailVerdicts}`;
-    
-    res.json({
-      ...analytics,
-      buildBailRatio
-    });
-  } catch (error) {
-    console.error("Error fetching analytics:", error);
-    res.status(500).json({
-      error: "Failed to fetch analytics",
       message: error instanceof Error ? error.message : "Unknown error"
     });
   }

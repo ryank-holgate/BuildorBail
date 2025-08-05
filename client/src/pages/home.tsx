@@ -197,12 +197,6 @@ export default function Home() {
             {/* Navigation Links */}
             <div className="flex justify-center gap-6 mt-8">
               <a 
-                href="/admin" 
-                className="glass-card px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-105 hover:neon-glow flex items-center gap-2"
-              >
-                <span className="text-purple-400">📊</span> Analytics Dashboard
-              </a>
-              <a 
                 href="/wall-of-shame" 
                 className="glass-card px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-105 hover:neon-glow flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-pink-500/20"
               >

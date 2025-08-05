@@ -70,12 +70,6 @@ export default function WallOfShame() {
             </div>
             <div className="flex gap-4">
               <a 
-                href="/admin" 
-                className="glass-card px-4 py-2 rounded-xl font-bold transition-all duration-300 hover:scale-105"
-              >
-                📊 Analytics
-              </a>
-              <a 
                 href="/" 
                 className="glass-card px-4 py-2 rounded-xl font-bold transition-all duration-300 hover:scale-105 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
               >

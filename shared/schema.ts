@@ -39,16 +39,7 @@ export const rateLimits = pgTable("rate_limits", {
   windowStart: timestamp("window_start").defaultNow().notNull(),
 });
 
-// Analytics table for aggregated stats
-export const analytics = pgTable("analytics", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  totalIdeasAnalyzed: integer("total_ideas_analyzed").default(0).notNull(),
-  totalBuildVerdicts: integer("total_build_verdicts").default(0).notNull(),
-  totalBailVerdicts: integer("total_bail_verdicts").default(0).notNull(),
-  totalTimeSaved: integer("total_time_saved").default(0).notNull(), 
-  averageScore: real("average_score").default(0).notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+
 
 export const insertAppIdeaSchema = createInsertSchema(appIdeas).omit({
   id: true,
@@ -70,19 +61,12 @@ export const insertRateLimitSchema = createInsertSchema(rateLimits).omit({
   windowStart: true,
 });
 
-export const insertAnalyticsSchema = createInsertSchema(analytics).omit({
-  id: true,
-  updatedAt: true,
-});
-
 export type InsertAppIdea = z.infer<typeof insertAppIdeaSchema>;
 export type AppIdea = typeof appIdeas.$inferSelect;
 export type InsertValidationResult = z.infer<typeof insertValidationResultSchema>;
 export type ValidationResult = typeof validationResults.$inferSelect;
 export type RateLimit = typeof rateLimits.$inferSelect;
 export type InsertRateLimit = z.infer<typeof insertRateLimitSchema>;
-export type Analytics = typeof analytics.$inferSelect;
-export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 
 export type ValidationResultWithIdea = ValidationResult & {
   appIdea: AppIdea;

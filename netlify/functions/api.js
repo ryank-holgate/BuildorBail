@@ -268,59 +268,7 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
       };
     }
 
-    // Route: GET analytics
-    if (route === 'analytics' && method === 'GET') {
-      let analyticsData = {
-        totalValidations: 1247,
-        buildCount: 312,
-        bailCount: 785,
-        cautionCount: 150,
-        totalTimeSaved: 65420,
-        averageScore: 4.2,
-        buildRate: 0.25,
-        bailRate: 0.63,
-        cautionRate: 0.12
-      };
 
-      // Get real analytics if database is available
-      if (db && process.env.DATABASE_URL) {
-        try {
-          const totalQuery = await db.execute(sql`SELECT COUNT(*) as count FROM validation_results`);
-          const buildQuery = await db.execute(sql`SELECT COUNT(*) as count FROM validation_results WHERE verdict = 'BUILD'`);
-          const bailQuery = await db.execute(sql`SELECT COUNT(*) as count FROM validation_results WHERE verdict = 'BAIL'`);
-          const cautionQuery = await db.execute(sql`SELECT COUNT(*) as count FROM validation_results WHERE verdict = 'CAUTION'`);
-          const avgQuery = await db.execute(sql`SELECT AVG(score) as avg FROM validation_results`);
-
-          const total = parseInt(totalQuery.rows[0]?.count) || 0;
-          const buildCount = parseInt(buildQuery.rows[0]?.count) || 0;
-          const bailCount = parseInt(bailQuery.rows[0]?.count) || 0;
-          const cautionCount = parseInt(cautionQuery.rows[0]?.count) || 0;
-
-          if (total > 0) {
-            analyticsData = {
-              totalValidations: total,
-              buildCount,
-              bailCount,
-              cautionCount,
-              totalTimeSaved: total * 52, // Estimated hours saved
-              averageScore: parseFloat(avgQuery.rows[0]?.avg) || 0,
-              buildRate: buildCount / total,
-              bailRate: bailCount / total,
-              cautionRate: cautionCount / total
-            };
-          }
-        } catch (dbError) {
-          console.error('Analytics database error:', dbError);
-          // Fall back to mock data
-        }
-      }
-
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(analyticsData)
-      };
-    }
 
     // Route: GET results or wall-of-shame
     if ((route === 'results' || route === 'wall-of-shame') && method === 'GET') {
@@ -506,7 +454,7 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
           route: route,
           method: method,
           fullPath: fullPath,
-          availableRoutes: ['analyze (POST)', 'analytics (GET)', 'results (GET)', 'wall-of-shame (GET)']
+          availableRoutes: ['analyze (POST)', 'results (GET)', 'wall-of-shame (GET)']
         }
       })
     };
