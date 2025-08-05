@@ -20,7 +20,8 @@ export default function WallOfShame() {
     queryFn: async () => {
       const res = await fetch('/api/wall-of-shame?limit=30');
       if (!res.ok) throw new Error('Failed to fetch wall of shame');
-      return res.json();
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -64,7 +65,7 @@ export default function WallOfShame() {
             <div>
               <h1 className="text-5xl font-black gradient-text neon-text">Wall of Shame</h1>
               <p className="text-gray-300 mt-3 text-lg">
-                Case studies from unsuccessful validations • {shameList.length} learning opportunities
+                Case studies from unsuccessful validations • {shameList?.length || 0} learning opportunities
               </p>
             </div>
             <div className="flex gap-4">
@@ -90,19 +91,19 @@ export default function WallOfShame() {
         <div className="bg-red-900/30 border-2 border-red-500 rounded-xl p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div>
-              <div className="text-3xl font-black text-red-400">{shameList.length}</div>
+              <div className="text-3xl font-black text-red-400">{shameList?.length || 0}</div>
               <div className="text-gray-300">Terrible Ideas</div>
             </div>
             <div>
               <div className="text-3xl font-black text-yellow-400">
-                {shameList.reduce((sum, entry) => sum + entry.timeSaved, 0).toLocaleString()}
+                {(shameList || []).reduce((sum, entry) => sum + (entry.timeSaved || 0), 0).toLocaleString()}
               </div>
               <div className="text-gray-300">Hours Saved</div>
             </div>
             <div>
               <div className="text-3xl font-black text-green-400">
-                {shameList.length > 0 
-                  ? (shameList.reduce((sum, entry) => sum + entry.score, 0) / shameList.length).toFixed(1)
+                {(shameList?.length || 0) > 0 
+                  ? ((shameList || []).reduce((sum, entry) => sum + (entry.score || 0), 0) / (shameList?.length || 1)).toFixed(1)
                   : "0"
                 }
               </div>
@@ -113,14 +114,14 @@ export default function WallOfShame() {
 
         {/* Shame List */}
         <div className="space-y-6">
-          {shameList.length === 0 ? (
+          {(shameList?.length || 0) === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">😢</div>
               <h3 className="text-2xl font-bold text-gray-400 mb-2">No Terrible Ideas Yet</h3>
               <p className="text-gray-500">Surprisingly, all submitted ideas have been... decent?</p>
             </div>
           ) : (
-            shameList.map((entry) => (
+            (shameList || []).map((entry) => (
               <Card key={entry.id} className="bg-gray-800 border-red-900/50 hover:border-red-500 transition-colors">
                 <CardHeader>
                   <div className="flex items-start justify-between">

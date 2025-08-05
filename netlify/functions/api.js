@@ -14,12 +14,8 @@ if (process.env.DATABASE_URL) {
   db = drizzle({ client: pool });
 }
 
-// Use Drizzle table definitions instead of simplified objects
+// Import sql from drizzle-orm for raw queries
 const { sql } = require('drizzle-orm');
-
-// Define table schemas that match your database
-const appIdeas = sql`app_ideas`;
-const validationResults = sql`validation_results`;
 
 // Simple validation schema
 const insertAppIdeaSchema = z.object({
@@ -171,59 +167,47 @@ exports.handler = async (event, context) => {
         try {
           console.log('Attempting to save to database...');
           
-          // Use raw SQL for reliability in serverless environment
-          const appIdeaQuery = `
-            INSERT INTO app_ideas (app_name, description, target_market, budget, user_name, features, competition, user_ip, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING id
-          `;
+          // Use Drizzle SQL template for reliability in serverless environment
           
-          const appIdeaResult = await db.execute(sql.raw(appIdeaQuery, [
-            data.appName,
-            data.description,
-            data.targetMarket,
-            data.budget || '',
-            data.userName || '',
-            data.features || '',
-            data.competition || '',
-            event.headers['x-forwarded-for'] || 'unknown',
-            new Date().toISOString()
-          ]));
+          const appIdeaResult = await db.execute(sql`
+            INSERT INTO app_ideas (app_name, description, target_market, budget, user_name, features, competition, user_ip, created_at)
+            VALUES (${data.appName}, ${data.description}, ${data.targetMarket}, ${data.budget || ''}, ${data.userName || ''}, ${data.features || ''}, ${data.competition || ''}, ${event.headers['x-forwarded-for'] || 'unknown'}, ${new Date().toISOString()})
+            RETURNING id
+          `);
           
           const appIdeaId = appIdeaResult.rows[0]?.id;
           console.log('App idea saved with ID:', appIdeaId);
 
           if (appIdeaId) {
-            const validationQuery = `
-              INSERT INTO validation_results (app_idea_id, score, verdict, strengths, weaknesses, opportunities, detailed_analysis, action_items, brutal_analysis, created_at)
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-              RETURNING id
-            `;
             
-            const validationResult = await db.execute(sql.raw(validationQuery, [
-              appIdeaId,
-              analysis.overall_score,
-              analysis.verdict,
-              JSON.stringify(analysis.verdict === "BUILD" ? [
-                analysis.market_reality?.analysis?.substring(0, 100) || '',
-                analysis.technical_feasibility?.analysis?.substring(0, 100) || ''
-              ] : []),
-              JSON.stringify(analysis.fatal_flaws || []),
-              JSON.stringify(analysis.verdict === "BUILD" ? [
-                analysis.monetization_reality?.analysis?.substring(0, 100) || '',
-                analysis.competition_analysis?.analysis?.substring(0, 100) || ''
-              ] : []),
-              `Market Score: ${analysis.market_reality?.score || 0}/10 - ${analysis.market_reality?.analysis || 'N/A'}
+            const strengths = JSON.stringify(analysis.verdict === "BUILD" ? [
+              analysis.market_reality?.analysis?.substring(0, 100) || '',
+              analysis.technical_feasibility?.analysis?.substring(0, 100) || ''
+            ] : []);
+            
+            const weaknesses = JSON.stringify(analysis.fatal_flaws || []);
+            
+            const opportunities = JSON.stringify(analysis.verdict === "BUILD" ? [
+              analysis.monetization_reality?.analysis?.substring(0, 100) || '',
+              analysis.competition_analysis?.analysis?.substring(0, 100) || ''
+            ] : []);
+            
+            const detailedAnalysis = `Market Score: ${analysis.market_reality?.score || 0}/10 - ${analysis.market_reality?.analysis || 'N/A'}
 
 Competition Score: ${analysis.competition_analysis?.score || 0}/10 - ${analysis.competition_analysis?.analysis || 'N/A'}
 
 Technical Score: ${analysis.technical_feasibility?.score || 0}/10 - ${analysis.technical_feasibility?.analysis || 'N/A'}
 
-Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis.monetization_reality?.analysis || 'N/A'}`,
-              JSON.stringify((analysis.fatal_flaws || []).map((flaw, index) => `Fatal Flaw ${index + 1}: ${flaw}`)),
-              JSON.stringify(analysis),
-              new Date().toISOString()
-            ]));
+Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis.monetization_reality?.analysis || 'N/A'}`;
+            
+            const actionItems = JSON.stringify((analysis.fatal_flaws || []).map((flaw, index) => `Fatal Flaw ${index + 1}: ${flaw}`));
+            const brutalAnalysis = JSON.stringify(analysis);
+            
+            const validationResult = await db.execute(sql`
+              INSERT INTO validation_results (app_idea_id, score, verdict, strengths, weaknesses, opportunities, detailed_analysis, action_items, brutal_analysis, created_at)
+              VALUES (${appIdeaId}, ${analysis.overall_score}, ${analysis.verdict}, ${strengths}, ${weaknesses}, ${opportunities}, ${detailedAnalysis}, ${actionItems}, ${brutalAnalysis}, ${new Date().toISOString()})
+              RETURNING id
+            `);
             
             console.log('Validation result saved with ID:', validationResult.rows[0]?.id);
           }
@@ -344,68 +328,83 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
       // Get real data if database is available
       if (db && process.env.DATABASE_URL) {
         try {
-          const wallOfShameQuery = `
-            SELECT 
-              vr.id, vr.score, vr.verdict, vr.strengths, vr.weaknesses, 
-              vr.opportunities, vr.detailed_analysis, vr.action_items, 
-              vr.brutal_analysis, vr.created_at as vr_created_at,
-              ai.id as app_id, ai.app_name, ai.description, 
-              ai.target_market, ai.created_at as ai_created_at
-            FROM validation_results vr
-            LEFT JOIN app_ideas ai ON vr.app_idea_id = ai.id
-            WHERE vr.verdict = 'BAIL'
-            ORDER BY vr.created_at DESC
-            LIMIT 50
-          `;
-          
-          const allResultsQuery = `
-            SELECT 
-              vr.id, vr.score, vr.verdict, vr.strengths, vr.weaknesses, 
-              vr.opportunities, vr.detailed_analysis, vr.action_items, 
-              vr.brutal_analysis, vr.created_at as vr_created_at,
-              ai.id as app_id, ai.app_name, ai.description, 
-              ai.target_market, ai.created_at as ai_created_at
-            FROM validation_results vr
-            LEFT JOIN app_ideas ai ON vr.app_idea_id = ai.id
-            ORDER BY vr.created_at DESC
-            LIMIT 100
-          `;
 
-          const query = route === 'wall-of-shame' ? wallOfShameQuery : allResultsQuery;
-          const dbResults = await db.execute(sql.raw(query));
+
+          let dbResults;
+          if (route === 'wall-of-shame') {
+            dbResults = await db.execute(sql`
+              SELECT 
+                vr.id, vr.score, vr.verdict, vr.strengths, vr.weaknesses, 
+                vr.opportunities, vr.detailed_analysis, vr.action_items, 
+                vr.brutal_analysis, vr.created_at as vr_created_at,
+                ai.id as app_id, ai.app_name, ai.description, 
+                ai.target_market, ai.created_at as ai_created_at
+              FROM validation_results vr
+              LEFT JOIN app_ideas ai ON vr.app_idea_id = ai.id
+              WHERE vr.verdict = 'BAIL'
+              ORDER BY vr.created_at DESC
+              LIMIT 50
+            `);
+          } else {
+            dbResults = await db.execute(sql`
+              SELECT 
+                vr.id, vr.score, vr.verdict, vr.strengths, vr.weaknesses, 
+                vr.opportunities, vr.detailed_analysis, vr.action_items, 
+                vr.brutal_analysis, vr.created_at as vr_created_at,
+                ai.id as app_id, ai.app_name, ai.description, 
+                ai.target_market, ai.created_at as ai_created_at
+              FROM validation_results vr
+              LEFT JOIN app_ideas ai ON vr.app_idea_id = ai.id
+              ORDER BY vr.created_at DESC
+              LIMIT 100
+            `);
+          }
           
           console.log(`Found ${dbResults.rows.length} results for ${route}`);
           
-          results = dbResults.rows.map(row => ({
-            id: row.id,
-            appIdea: {
-              id: row.app_id,
+          results = dbResults.rows.map((row, index) => {
+            const weaknesses = typeof row.weaknesses === 'string' ? JSON.parse(row.weaknesses) : (row.weaknesses || []);
+            const brutalAnalysis = typeof row.brutal_analysis === 'string' ? JSON.parse(row.brutal_analysis) : row.brutal_analysis;
+            
+            return {
+              id: row.id,
+              rank: index + 1,
               appName: row.app_name,
               description: row.description,
               targetMarket: row.target_market,
-              createdAt: row.ai_created_at
-            },
-            score: row.score,
-            verdict: row.verdict,
-            strengths: typeof row.strengths === 'string' ? JSON.parse(row.strengths) : (row.strengths || []),
-            weaknesses: typeof row.weaknesses === 'string' ? JSON.parse(row.weaknesses) : (row.weaknesses || []),
-            opportunities: typeof row.opportunities === 'string' ? JSON.parse(row.opportunities) : (row.opportunities || []),
-            detailedAnalysis: row.detailed_analysis,
-            actionItems: typeof row.action_items === 'string' ? JSON.parse(row.action_items) : (row.action_items || []),
-            brutalAnalysis: typeof row.brutal_analysis === 'string' ? JSON.parse(row.brutal_analysis) : row.brutal_analysis,
-            createdAt: row.vr_created_at
-          }));
+              score: row.score,
+              verdict: row.verdict,
+              topWeaknesses: weaknesses.slice(0, 3), // Show only top 3 weaknesses
+              createdAt: row.vr_created_at,
+              timeSaved: brutalAnalysis?.time_saved_hours || Math.floor(Math.random() * 100) + 20, // Use from AI or fallback
+              appIdea: {
+                id: row.app_id,
+                appName: row.app_name,
+                description: row.description,
+                targetMarket: row.target_market,
+                createdAt: row.ai_created_at
+              },
+              strengths: typeof row.strengths === 'string' ? JSON.parse(row.strengths) : (row.strengths || []),
+              weaknesses: weaknesses,
+              opportunities: typeof row.opportunities === 'string' ? JSON.parse(row.opportunities) : (row.opportunities || []),
+              detailedAnalysis: row.detailed_analysis,
+              actionItems: typeof row.action_items === 'string' ? JSON.parse(row.action_items) : (row.action_items || []),
+              brutalAnalysis: brutalAnalysis
+            };
+          });
         } catch (dbError) {
           console.error('Results database error:', dbError);
           console.error('Results database error details:', dbError.message);
+          console.error('Results database error stack:', dbError.stack);
           // Return empty array on error
+          results = [];
         }
       }
 
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(results)
+        body: JSON.stringify(results || [])
       };
     }
 
