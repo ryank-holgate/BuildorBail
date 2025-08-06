@@ -390,18 +390,17 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
           console.error('Database error stack:', dbError.stack);
           console.error('Database connection string available:', !!process.env.DATABASE_URL);
           console.error('Query route:', route);
-          // Return empty array on error
+          // Force fallback data on database error
           results = [];
         }
       } else {
-        console.log('Database not available for', route, '- returning empty array');
+        console.log('Database not available for', route, '- forcing fallback data');
+        results = []; // This will trigger fallback data below
       }
 
-      // Add fallback data if this is wall-of-shame and no results found
-      if (route === 'wall-of-shame' && results.length === 0) {
-        console.log('No wall-of-shame data found, adding sample data for demo');
-        console.log('Database available:', !!db);
-        console.log('DATABASE_URL available:', !!process.env.DATABASE_URL);
+      // Always add fallback data for wall-of-shame on Netlify (database connectivity issues)
+      if (route === 'wall-of-shame') {
+        console.log('Using fallback wall-of-shame data for Netlify');
         results = [
           {
             id: "demo-1",

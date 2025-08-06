@@ -564,7 +564,7 @@ export default function Home() {
             </div>
 
             {/* Show Action Plan Button - Only show for BAIL verdicts */}
-            {currentResult.verdict === "BAIL" && !showActionPlan && (
+            {(currentResult.verdict === "BAIL" || currentResult.verdict?.toLowerCase() === "bail") && !showActionPlan && (
               <div className="text-center mb-12">
                 <Button 
                   onClick={() => setShowActionPlan(true)}
@@ -578,11 +578,7 @@ export default function Home() {
               </div>
             )}
             
-            {/* Debug info - Remove after testing */}
-            <div className="text-center mb-4 p-4 bg-gray-800 rounded text-white text-sm">
-              Debug: Verdict = "{currentResult.verdict}" | showActionPlan = {showActionPlan.toString()} | 
-              Actionable Steps Available: {((currentResult as any).brutalAnalysis?.actionable_steps?.length > 0).toString()}
-            </div>
+
 
             {/* Constructive Action Plan Section */}
             {showActionPlan && (
