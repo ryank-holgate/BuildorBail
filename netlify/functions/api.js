@@ -400,6 +400,8 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
       // Add fallback data if this is wall-of-shame and no results found
       if (route === 'wall-of-shame' && results.length === 0) {
         console.log('No wall-of-shame data found, adding sample data for demo');
+        console.log('Database available:', !!db);
+        console.log('DATABASE_URL available:', !!process.env.DATABASE_URL);
         results = [
           {
             id: "demo-1",
@@ -436,6 +438,10 @@ Monetization Score: ${analysis.monetization_reality?.score || 0}/10 - ${analysis
         ];
       }
 
+      console.log(`Returning ${(results || []).length} results for ${route}`);
+      console.log('Response status: 200');
+      console.log('First result sample:', results?.[0] ? JSON.stringify(results[0]).substring(0, 100) + '...' : 'No results');
+      
       return {
         statusCode: 200,
         headers,
