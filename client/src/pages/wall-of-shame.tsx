@@ -18,9 +18,17 @@ export default function WallOfShame() {
   const { data: shameList, isLoading, error } = useQuery<ShameEntry[]>({
     queryKey: ['/api/wall-of-shame'],
     queryFn: async () => {
+      console.log('Fetching wall of shame data...');
       const res = await fetch('/api/wall-of-shame?limit=30');
-      if (!res.ok) throw new Error('Failed to fetch wall of shame');
+      console.log('Response status:', res.status);
+      if (!res.ok) {
+        console.error('API error:', res.status, res.statusText);
+        throw new Error(`Failed to fetch wall of shame: ${res.status}`);
+      }
       const data = await res.json();
+      console.log('Raw API response:', data);
+      console.log('Is array?', Array.isArray(data));
+      console.log('Data length:', data?.length);
       return Array.isArray(data) ? data : [];
     }
   });
@@ -38,18 +46,23 @@ export default function WallOfShame() {
     );
   }
 
-  if (error || !shameList) {
+  if (error) {
+    console.error('Wall of Shame error:', error);
     return (
       <div className="min-h-screen bg-gray-900 text-white p-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-red-400 mb-4">Wall of Shame Unavailable</h1>
             <p className="text-gray-400">Could not load the terrible ideas</p>
+            <p className="text-gray-500 text-sm mt-2">Error: {error.message}</p>
           </div>
         </div>
       </div>
     );
   }
+
+  // Even if shameList is undefined, let's show the interface
+  console.log('Final shameList state:', shameList, 'Loading:', isLoading, 'Error:', error);
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
