@@ -577,6 +577,12 @@ export default function Home() {
                 </p>
               </div>
             )}
+            
+            {/* Debug info - Remove after testing */}
+            <div className="text-center mb-4 p-4 bg-gray-800 rounded text-white text-sm">
+              Debug: Verdict = "{currentResult.verdict}" | showActionPlan = {showActionPlan.toString()} | 
+              Actionable Steps Available: {((currentResult as any).brutalAnalysis?.actionable_steps?.length > 0).toString()}
+            </div>
 
             {/* Constructive Action Plan Section */}
             {showActionPlan && (
