@@ -561,6 +561,21 @@ export default function Home() {
                   <h3 className="text-3xl font-bold gradient-text">
                     Your Idea Has Terminal Problems
                   </h3>
+                  
+                  {/* Immediate Fix Button in Fatal Flaws Section */}
+                  {currentResult.verdict && currentResult.verdict.toUpperCase() === "BAIL" && !showActionPlan && (
+                    <div className="mt-6">
+                      <Button 
+                        onClick={() => setShowActionPlan(true)}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-lg px-8 py-4 rounded-lg transform transition-all hover:scale-105 shadow-lg neon-glow"
+                      >
+                        🚀 Show Me How to Fix This
+                      </Button>
+                      <p className="text-green-400 mt-2 text-sm">
+                        Every great app started with a terrible first idea
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {((currentResult as any).brutalAnalysis?.fatal_flaws || currentResult.weaknesses).map((flaw: string, index: number) => (
@@ -605,18 +620,20 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Show Action Plan Button - Only show for BAIL verdicts */}
-            {(currentResult.verdict === "BAIL" || currentResult.verdict?.toLowerCase() === "bail") && !showActionPlan && (
-              <div className="text-center mb-12">
+            {/* Show Action Plan Button - Show for any BAIL verdict */}
+            {currentResult.verdict && currentResult.verdict.toUpperCase() === "BAIL" && !showActionPlan && (
+              <div className="text-center mb-12 animate-pulse">
+                <div className="mb-4">
+                  <div className="text-green-400 text-lg font-semibold mb-2">
+                    💡 Don't give up! Every great app started with a terrible first idea.
+                  </div>
+                </div>
                 <Button 
                   onClick={() => setShowActionPlan(true)}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-12 py-6 rounded-lg transform transition-all hover:scale-105 shadow-lg neon-glow"
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-12 py-6 rounded-lg transform transition-all hover:scale-105 shadow-lg neon-glow pulse-glow"
                 >
                   🚀 Show Me How to Fix This
                 </Button>
-                <p className="text-green-400 mt-4 text-lg font-semibold">
-                  Every great app started with a terrible first idea
-                </p>
               </div>
             )}
             
