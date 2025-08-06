@@ -54,12 +54,33 @@ export default function Home() {
         appName: data.appName,
         description: data.description,
         targetMarket: data.targetMarket,
-        budget: data.budget,
+        budget: data.budget || "",
         agreeToTerms: true,
       };
       
-      const response = await apiRequest("POST", "/api/analyze", transformedData);
-      return response.json();
+      try {
+        console.log("Sending request with data:", transformedData);
+        const response = await apiRequest("POST", "/api/analyze", transformedData);
+        console.log("Got response, parsing JSON...");
+        const result = await response.json();
+        console.log("Successfully parsed response:", result);
+        
+        // Validate that we got the expected structure
+        if (!result || typeof result !== 'object') {
+          throw new Error('Invalid response format: expected object');
+        }
+        
+        if (!result.brutalAnalysis) {
+          console.warn('No brutalAnalysis in response, using fallback');
+        }
+        
+        return result;
+      } catch (error) {
+        console.error("API call failed:", error);
+        console.error("Error type:", typeof error);
+        console.error("Error name:", error instanceof Error ? error.name : 'Unknown');
+        throw error;
+      }
     },
     onSuccess: (result) => {
       console.log("Validation result:", result);
@@ -87,12 +108,33 @@ export default function Home() {
       setTimeout(() => setFlipCards([true, true, true, false]), 2500);
       setTimeout(() => setFlipCards([true, true, true, true]), 3000);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Validation error:", error);
+      console.error("Error details:", {
+        message: error?.message,
+        status: error?.status,
+        response: error?.response
+      });
       setIsLoading(false);
+      
+      let errorMessage = "Failed to analyze your app idea. Please try again.";
+      
+      if (error?.message?.includes("validation")) {
+        errorMessage = "Please check your input fields and try again.";
+      } else if (error?.message?.includes("network")) {
+        errorMessage = "Network error. Please check your connection and try again.";
+      } else if (error?.response) {
+        try {
+          const errorData = typeof error.response === 'string' ? JSON.parse(error.response) : error.response;
+          errorMessage = errorData?.message || errorData?.error || errorMessage;
+        } catch (e) {
+          console.error("Could not parse error response:", e);
+        }
+      }
+      
       toast({
-        title: "Validation Failed",
-        description: error instanceof Error ? error.message : "Failed to destroy your app idea. Please try again.",
+        title: "Analysis Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     },
